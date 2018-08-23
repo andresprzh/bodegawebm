@@ -44,10 +44,6 @@
 <script src="vistas/lib/materialize/js/materialize.js"></script>
 <script src="vistas/lib/materialize/js/init.js"></script>
 
-<script>
-  var usuario=JSON.parse('<?php print json_encode($_SESSION["usuario"]);?>');
-</script>
-
 </head>
 <!-- ============================================================================================================================
                             CUERPO DOCUMENTO

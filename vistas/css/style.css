@@ -29,13 +29,13 @@ p,text{
 
 
 .login{
-  
   padding-top: 8%;
-  
+    background: url("../imagenes/plantilla/back.png");
+    background-size:cover;
 }
 
 .login-box{
-  
+  background-color: aliceblue;
   border: 2px solid rgba(15, 102, 15, 0.37);
 }
 
@@ -69,3 +69,5 @@ tbody {
   table {
   width:100%;
   }
+
+  
