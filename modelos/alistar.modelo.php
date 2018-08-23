@@ -22,39 +22,18 @@ class ModeloAlistar extends Conexion{
     //funcion que asigna los la cantidad alistada a cada item en la caja
     public function mdlAlistarItem($items,$numcaja){
 
-        // // obtiene numero de rquisicion y el nombre del alistador
-        // $no_req=$this->req[0];$alistador=$this->req[1];
-        // $cod_barras=$items["codigo"];
-        // $alistados=$items["alistados"];
-        
-        // $stmt= $this->link->prepare('CALL empacar(:cod_barras,:alistados,:alistador,:tipocaja,:no_req)');
-        
-        // $stmt->bindParam(":cod_barras",$cod_barras,PDO::PARAM_STR);
-        // $stmt->bindParam(":alistados",$alistados,PDO::PARAM_INT);
-        // $stmt->bindParam(":alistador",$alistador,PDO::PARAM_INT);
-        // $stmt->bindParam(":tipocaja",$tipocaja,PDO::PARAM_STR);
-        // $stmt->bindParam(":no_req",$no_req,PDO::PARAM_STR);
-
-        // $res=$stmt->execute();
-        // // $stmt->closeCursor();
-        // // retorna el resultado de la sentencia
-	    // return $stmt->errorInfo();
-
-        // // cierra la conexion
-        // $stmt=null;
-
-
+    
         $no_req=$this->req[0];$alistador=$this->req[1];
-        $cod_barras=$items["codigo"];
+        $iditem=$items["iditem"];
         $alistados=$items["alistados"];
         
         $stmt= $this->link->prepare('UPDATE pedido
 		SET alistado=:alistados,estado=2
-		WHERE Item=(SELECT ID_ITEMS FROM COD_BARRAS WHERE ID_CODBAR=:cod_barras)
+		WHERE Item=:iditem
 		AND no_req=:no_req;
         ');
 
-        $stmt->bindParam(":cod_barras",$cod_barras,PDO::PARAM_STR);
+        $stmt->bindParam(":iditem",$iditem,PDO::PARAM_STR);
         $stmt->bindParam(":alistados",$alistados,PDO::PARAM_INT);
         $stmt->bindParam(":no_req",$no_req,PDO::PARAM_STR);
 

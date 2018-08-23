@@ -91,7 +91,7 @@
         <br>
         <br>
         <br>
-        <table class="striped centered hide" id="TablaEd"  style="width:100%">
+        <table class="striped centered " id="TablaEd"  style="width:100%">
         
             <thead>
 

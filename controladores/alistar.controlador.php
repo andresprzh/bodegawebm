@@ -211,8 +211,6 @@ class ControladorAlistar {
         $numcaja = ($busqueda->fetch());
         $numcaja = $numcaja['numcaja'];
         for ($i=0; $i <count($items) ; $i++) { 
-            $cod_barras=$items[$i]["codigo"];
-            $alistados=$items[$i]["alistados"];
             $resultado=$this->modelo->mdlAlistarItem($items[$i],$numcaja);
         }
         if ($resultado) {
