@@ -52,16 +52,16 @@ $(document).ready(function () {
                 // // $('.tabs').tabs({ 'swipeable': true });//reinicia el tabs
                 
                 
-                // var ubicaciones=table.columns(7).data().eq(0).sort().unique().toArray();
-                
-                // for (let i in ubicaciones) {
-                    
-                //     $("#ubicacion").append($('<option value="' + ubicaciones[i]+ '">' + ubicaciones[i]+ '</option>'));
-
+                // var input, filter, table, tr, td, i;
+                // // input = document.getElementById("myInput");
+                // // filter = input.value.toUpperCase();
+                // table = document.getElementById("tablavista");
+                // tr = table.getElementsByTagName("tr");
+                // for (i = 0; i < tr.length; i++) {
+                //     td = tr[i].getElementsByTagName("td")[0];
+                //     console.log(td.innerHTML);   
                 // }
-                // //no muestra datos en la tabla
-                // $('#ubicacion').val("");
-                // cambiarUbicacion();
+
 
             });   
         });
@@ -381,11 +381,12 @@ function mostrarItems() {
             if (res['estado'] != "error") {
                 
                 
-                var items = res['contenido'];
+                let items = res['contenido'];
                 
                 $('#tablavista').html("");
+                
 
-                for (var i in items) {   
+                for (let i in items) {   
                     
                     $('#tablavista').append($(`<tr>
                                             <td>${items[i]['descripcion']}</td>
@@ -394,6 +395,16 @@ function mostrarItems() {
                                             <td>${items[i]['ubicacion']}</td>
                                         </tr>`));
 
+                }
+
+                // se carga el menu seleccion de ubicaciones
+                let ubicaciones=res['ubicaciones'];
+                $('#ubicacion').html("");
+                $("#ubicacion").append($('<option value=""  selected>Ubicacion</option>'));
+                for (let i in ubicaciones) {
+
+                    $("#ubicacion").append($('<option value="' + ubicaciones[i]+ '">' + ubicaciones[i]+ '</option>'));
+    
                 }
 
             }
@@ -461,19 +472,31 @@ function mostrarCaja() {
     });
 }
 
-// function cambiarUbicacion(){
-//     let ubicacion=$('#ubicacion').val(); //dato de ubicacion del menu de seleccion 
+function cambiarUbicacion(){
+    let input=$('#ubicacion').val(); //dato de ubicacion del menu de seleccion 
     
-//     let tabla=$("#TablaVi").DataTable();
-
-//     // evita que alistadores vean todos los items
-//     if (perfil==3 &&  ubicacion=='') {
-//         ubicacion='---';
-//     }
-//     // tabla.columns(7).search(ubicacion).draw();
-//     // ubicacion="EB09";
-//     tabla.columns(7).search(ubicacion).draw();
-// }
+    // evita que alistadores vean todos los items
+    if (perfil==3 &&  input=='') {
+        input='---';
+    }
+    
+    var  filter, table, tr, td, i;
+    
+    filter = input.toUpperCase();
+    table = document.getElementById("tablavista");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[3];
+        if (td) {
+        if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+        } else {
+            tr[i].style.display = "none";
+        }
+        }       
+    }
+    
+}
 
 // // FUNCION QUE INICIA DATATABLE
 // function iniciar_tabla(tabla) {

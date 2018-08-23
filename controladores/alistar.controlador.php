@@ -94,10 +94,13 @@ class ControladorAlistar {
                                             ];
                         
                         $cont++;
-
+                        $itembus["ubicaciones"][$cont]=$row["ubicacion"];                          
                     }
 
                 }
+
+                // guerda las ubicaciones
+                $itembus["ubicaciones"]=array_unique($itembus["ubicaciones"]);
 
                 return $itembus;
 

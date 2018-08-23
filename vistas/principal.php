@@ -26,8 +26,6 @@
 <!-- Materialize -->
 <link rel="stylesheet" href="vistas/lib/materialize/css/materialize.css">
 
-<!-- DataTables -->
-<link rel="stylesheet" type="text/css" href="vistas/lib/DataTables/datatables.css"/>
  
 
 
@@ -38,9 +36,6 @@
 <script src="vistas/lib/jquery/dist/jquery.min.js"></script>
 
 
-<!-- DataTables -->
-<script type="text/javascript" src="vistas/lib/DataTables/datatables.min.js"></script>
-
 
 <!-- SweetAlert 2 -->
 <script src="vistas/plugins/sweetalert2/sweetalert.min.js"></script>
@@ -49,7 +44,9 @@
 <script src="vistas/lib/materialize/js/materialize.js"></script>
 <script src="vistas/lib/materialize/js/init.js"></script>
 
-
+<script>
+  var usuario=JSON.parse('<?php print json_encode($_SESSION["usuario"]);?>');
+</script>
 
 </head>
 <!-- ============================================================================================================================

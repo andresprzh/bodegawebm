@@ -56,16 +56,10 @@
                 <label for="codbarras" class="right">Item</label>
 
             </div>  
-            <div class="input-field col hide-on-small-only m1 l2 hide input_barras">
 
-                <button id="agregar" title="Buscar Item" class="btn waves-effect waves-light green darken-3 col s12 m12 l8" >
-                    <i class="fas fa-plus"></i>
-                </button>
-                
-            </div>
         </div>
 
-        <table class="highlight centered "  style="width:100%" >
+        <table class="highlight centered hide" id="TablaVi"  style="width:100%" >
 
             <thead>
             
@@ -97,7 +91,7 @@
         <br>
         <br>
         <br>
-        <table class="striped centered "  style="width:100%">
+        <table class="striped centered hide" id="TablaEd"  style="width:100%">
         
             <thead>
 
