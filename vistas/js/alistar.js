@@ -3,11 +3,7 @@ $(document).ready(function () {
 /* ============================================================================================================================
                                                     INICIALIZACION   
 ============================================================================================================================*/
-    // INICIA DATATABLE
 
-    // table = iniciar_tabla();
-    
-    
     // INICIAR TABS
     $('.tabs').tabs({ 'swipeable': false });
     
@@ -30,9 +26,6 @@ $(document).ready(function () {
 
         }
     });
-    
-
-
 
 /* ============================================================================================================================
                                                     EVENTOS   
@@ -40,17 +33,14 @@ $(document).ready(function () {
 
     //EVENTO AL CAMBIAR ENTRADA REQUERIDOS
     $(".requeridos").change(function (e) {
-
-        //destruye datatabel para reiniciarla
-        //espera a que la funcion termine para reiniciar las tablas
-
         
         $.when(mostrarItems()).done(function () {
             
             $.when( mostrarCaja()).done(function () {
                 
                 $(".input_barras").removeClass("hide");
-                $("TablaVi").addClass("hide");
+                $("#ubicacion").removeClass("hide");
+                $("#TablaVi").addClass("hide");
 
             });   
         });
@@ -71,7 +61,7 @@ $(document).ready(function () {
         if (e.which == 13) {
 
             $.when(buscarCodbar()).done(function () {
-                $.when( mostrarCaja()).done(function () {
+                $.when(mostrarItems()).done(function () {
                 
                     cambiarUbicacion();
     
@@ -245,8 +235,8 @@ function buscarCodbar() {
         success: function (res) {
             
             agregarItem(res);
-
-            $('#codbarras').val(""  );
+            
+            $('#codbarras').val("");
         }
 
     });
@@ -276,7 +266,7 @@ function agregarItem(res) {
               if (!value) {
                   value=1;
               }
-
+              
             //   se guarda el id del item en el id de la fila
             $('#tablaeditable').append($(`<tr id='${items['iditem']}'>
                                             <td>${items['descripcion']}</td>
@@ -290,6 +280,9 @@ function agregarItem(res) {
             var toastHTML = '<p class="truncate">Agregado Item <span class="yellow-text">' + items['descripcion'] + '</span></p>';
             M.toast({ html: toastHTML, classes: "light-green darken-4 rounded",displayLength: 500 });
         });
+
+        $("#TablaE").removeClass("hide");
+
         //si no encontro el item regresa el contenido del error(razon por la que no lo encontro)
     } else {
         swal(res['contenido'], {
@@ -355,8 +348,7 @@ function mostrarItems() {
 
 }
 
-
-// // FUNCION QUE CREA O MUESTRA UNA CAJA
+// FUNCION QUE CREA O MUESTRA UNA CAJA
 function mostrarCaja() {
 
     //consigue el numero de requerido
@@ -394,6 +386,8 @@ function mostrarCaja() {
                                         </tr>`));
 
                     }
+
+                    $("#TablaE").removeClass("hide");
                     // si hay una caja sin cerrar en otra requisicion muestra mensaje adventencia y recarga la pagina          
                 } else if (res['estado'] == 'error2') {
                     swal({
@@ -414,16 +408,17 @@ function mostrarCaja() {
 }
 
 function cambiarUbicacion(){
-    let input=$('#ubicacion').val(); //dato de ubicacion del menu de seleccion 
+    let ubicacion=$('#ubicacion').val(); //dato de ubicacion del menu de seleccion 
+    console.log(ubicacion);
     $("#TablaVi").removeClass("hide");
     // evita que alistadores vean todos los items
-    if (perfil==3 &&  input=='') {
-        input='---';
+    if (perfil==3 &&  ubicacion=='') {
+        ubicacion='---';
     }
     
     var  filter, table, tr, td, i;
     
-    filter = input.toUpperCase();
+    filter = ubicacion.toUpperCase();
     table = document.getElementById("tablavista");
     tr = table.getElementsByTagName("tr");
     for (i = 0; i < tr.length; i++) {

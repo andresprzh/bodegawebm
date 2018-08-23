@@ -44,7 +44,7 @@
     
     <div  id="TablaV" >
         
-        <select  list="ubicacion" name="ubicacion" class="browser-default" id="ubicacion">
+        <select  list="ubicacion" name="ubicacion" class="browser-default hide" id="ubicacion">
             <option value=""  selected>Ubicacion</option>
         </select>
 
@@ -84,7 +84,7 @@
     <!-- ==============================================================
                 TABLA EDITABLE    
     ============================================================== -->
-    <div id="TablaE" >
+    <div id="TablaE" class="hide" >
 
         <br>
         <br>
