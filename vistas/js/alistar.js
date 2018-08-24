@@ -254,7 +254,7 @@ function eliminarItem(iditem,req){
 }
 
 // FUNCION QUE RECARGA LAS TABLAS
-function recargar(){
+function recargarItems(){
 
     // se recarga tablas y ubicacion
     let ubicacion=$('#ubicacion').val();
