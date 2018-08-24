@@ -3,11 +3,12 @@
   <main class="login " >
     <center>
       
-
+    <img class="responsive-img" style="width: 20vh;" src="vistas\imagenes\plantilla\logo.svg" />  
       <div class=" row">
-      
+         
+
         <div class="z-depth-1 col s10 m6 l4 offset-s1 offset-m3  offset-l4 login-box" >
-          <img class="responsive-img" style="width: 200px;" src="vistas\imagenes\plantilla\logo.svg" />     
+          
           <form class="col s12" method="post">
             
             <div class='row'>

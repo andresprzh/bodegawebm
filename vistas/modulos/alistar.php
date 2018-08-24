@@ -43,21 +43,26 @@
     ============================================================== -->
     
     <div  id="TablaV" >
-        
-        <select  list="ubicacion" name="ubicacion" class="browser-default hide" id="ubicacion">
-            <option value=""  selected>Ubicacion</option>
-        </select>
-
-        <!-- INPUT PARA AGREGAR ITEMS -->
-        <div class="row ">      
-            <div class="input-field center col s12 m10 l10 hide  input_barras">
+        <div class="row entradas hide ">
+            <div class="col s9">
+                <select  list="ubicacion" name="ubicacion" class="browser-default " id="ubicacion">
+                    <option value=""  selected>Ubicacion</option>
+                </select>
+            </div> 
+            <div class="col s3">
+                <button id="refresh" title="Recargar" onclick="recargarItems()" class="btn waves-effect waves-light green darken-3 " >
+                    <i class="fas fa-sync"></i>
+                </button>
+            </div> 
+            <!-- INPUT PARA AGREGAR ITEMS -->
+            <div class="input-field center col s12  input_barras">
 
                 <input  id="codbarras" type="text" class="validate">
                 <label for="codbarras" class="right">Item</label>
 
-            </div>  
-
+            </div> 
         </div>
+
 
         <table class="highlight centered hide" id="TablaVi"  style="width:100%" >
 

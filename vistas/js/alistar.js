@@ -38,10 +38,6 @@ $(document).ready(function () {
             
             $.when( mostrarCaja()).done(function () {
                 
-                $(".input_barras").removeClass("hide");
-                $("#ubicacion").removeClass("hide");
-                $("#TablaVi").addClass("hide");
-
             });   
         });
 
@@ -59,12 +55,11 @@ $(document).ready(function () {
 
         //si se presiona enter busca el item y lo pone en la pagina
         if (e.which == 13) {
-
+            let ubicacion=$('#ubicacion').val();
             $.when(buscarCodbar()).done(function () {
                 $.when(mostrarItems()).done(function () {
-                
+                    $('#ubicacion').val(ubicacion);
                     cambiarUbicacion();
-    
                 });   
             });
             
@@ -115,21 +110,13 @@ $(document).ready(function () {
 
             if(Quitar) {
 
-                $.ajax({
-                    type: "POST",
-                    url: "ajax/alistar.eliminar.ajax.php",
-                    data: { "iditem": iditem,"req":req},
-                    dataType: "JSON",
-                    success: function (res) {
-                        
-                        if (res!=false) {
-                            
-                            $( `#${iditem}` ).remove();
-                        }else{
-                            var toastHTML = '<p class="truncate">No se pudo eliminar el item</span></p>';
-                            M.toast({ html: toastHTML, classes: "red darken-4" });
-                        }
-                    }
+                // elimina el item y vuelve a cargar la tabla de vista
+                let ubicacion=$('#ubicacion').val();
+                $.when(eliminarItem(iditem,req)).done(function () {
+                    $.when(mostrarItems()).done(function () {
+                        $('#ubicacion').val(ubicacion);
+                        cambiarUbicacion();
+                    });   
                 });
 
             }
@@ -244,6 +231,40 @@ function buscarCodbar() {
 
 }
 
+// FUNCIONQ UE QUITA UN ITEM DE LA CAJA
+function eliminarItem(iditem,req){
+
+    return $.ajax({
+        type: "POST",
+        url: "ajax/alistar.eliminar.ajax.php",
+        data: { "iditem": iditem,"req":req},
+        dataType: "JSON",
+        success: function (res) {
+            
+            if (res!=false) {
+                
+                $( `#${iditem}` ).remove();
+            }else{
+                var toastHTML = '<p class="truncate">No se pudo eliminar el item</span></p>';
+                M.toast({ html: toastHTML, classes: "red darken-4" });
+            }
+        }
+    });
+
+}
+
+// FUNCION QUE RECARGA LAS TABLAS
+function recargar(){
+
+    // se recarga tablas y ubicacion
+    let ubicacion=$('#ubicacion').val();
+    $.when(mostrarItems()).done(function () {
+        $.when( mostrarCaja()).done(function () {
+            $('#ubicacion').val(ubicacion);
+            cambiarUbicacion();
+        });   
+    });
+}
 
 //FUNCION QUE AGREGA ITEM A LA TABLA EDITABLE
 function agregarItem(res) {
@@ -292,7 +313,6 @@ function agregarItem(res) {
 
 }
 
-
 // FUNCION QUE PONE LOS ITEMS  EN LA TABLA
 function mostrarItems() {
 
@@ -339,7 +359,11 @@ function mostrarItems() {
                     $("#ubicacion").append($('<option value="' + ubicaciones[i]+ '">' + ubicaciones[i]+ '</option>'));
     
                 }
+                $(".entradas").removeClass("hide");
 
+            }else{
+                //oculta las entradas
+                $(".entradas").addClass("hide");
             }
 
         }
@@ -409,7 +433,7 @@ function mostrarCaja() {
 
 function cambiarUbicacion(){
     let ubicacion=$('#ubicacion').val(); //dato de ubicacion del menu de seleccion 
-    console.log(ubicacion);
+    
     $("#TablaVi").removeClass("hide");
     // evita que alistadores vean todos los items
     if (perfil==3 &&  ubicacion=='') {
