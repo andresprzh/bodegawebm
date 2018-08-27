@@ -394,7 +394,7 @@ function mostrarCaja() {
                 if (res['estado'] == 'encontrado') {
                     
                     //refresca las tablas, para volver a cargar los datos
-                    
+                    $('#tablaeditable').html("");
 
                     var items = res['contenido'];
                     

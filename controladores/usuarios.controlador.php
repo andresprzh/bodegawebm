@@ -51,7 +51,7 @@ class ControladorUsuarios {
                     
                 //de lo contrario muestra un mensaje de alerta
                 }else {
-                    echo '<br><div class="card-panel  red darken-4">Error al ingresas, vuelva aintentar</div>';
+                    echo '<br><div class="card-panel  red darken-4">Error al ingresas, vuelva a intentar</div>';
                 }
                 
             }

@@ -53,21 +53,41 @@ p,text{
 }
 
 
-tbody {
+
+table tbody {
   display:block;
   height:380px;
-  overflow:auto;
+  overflow-y:auto;
+  
   }
-  thead, tbody tr {
+table  thead,table tbody tr {
   display:table;
   width:100%;
   table-layout:fixed;
   }
-  thead {
+/* table  thead {
   width: calc( 100% - 1em )
-  }
+  } */
   table {
-  width:100%;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
   }
+
+table td, table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+table tr:nth-child(even){background-color: #f2f2f2;}
+
+table tr:hover {background-color: #ddd;}
+
+table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    color: white;
+}
 
   
