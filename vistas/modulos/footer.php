@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col 12s ">
             
-           <a class="" href="#!">*******************</a>
+           <a class="black-text" href="#!">Farmacia Drogueria San Jorge 2018 </a>
 
         </div>
     </div>
