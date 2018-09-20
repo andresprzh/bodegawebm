@@ -220,9 +220,15 @@ class ControladorAlistar {
         return $resultado;
     }
 
-    public function ctrEliminarItemCaja($cod_barras){
+    public function ctrEliminarItemCaja($cod_barras,$no_caja=null){
+        
+        if ($no_caja==null) {
+            $busqueda=$this->modelo->mdlMostrarNumCaja();
+            $row=$busqueda->fetch();
+            $no_caja=$row['numcaja'];
+        }
 
-        return $this->modelo->mdlEliminarItemCaja($cod_barras);
+        return $this->modelo->mdlEliminarItemCaja($cod_barras,$no_caja);
 
     }
 }

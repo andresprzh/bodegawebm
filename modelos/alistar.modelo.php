@@ -88,18 +88,21 @@ class ModeloAlistar extends Conexion{
     }
 
     // saca el item de una caja cambiando la caja a 1 su estado a 0 y la cantidad alistada a 0
-    public function mdlEliminarItemCaja($item){
+    public function mdlEliminarItemCaja($item,$no_caja){
         $no_req=$this->req[0];$alistador=$this->req[1];
         
-        $sql="UPDATE pedido SET no_caja=1,estado=0,alistado=0 WHERE item=:item;";
+        
+        $sql="UPDATE pedido SET no_caja=1,estado=0,alistado=0 WHERE item=:item AND no_req=:no_req; AND no_caja=:no_caja";
 
         $stmt= $this->link->prepare($sql);
 
         $stmt->bindParam(":item",$item,PDO::PARAM_STR);
+        $stmt->bindParam(":no_req",$no_req,PDO::PARAM_STR);
+        $stmt->bindParam(":no_caja",$no_caja,PDO::PARAM_INT);
 
         $res=$stmt->execute();
         
-        return $stmt->errorinfo();
+        return $res;
 
         // cierra la conexion
         $stmt=null;
