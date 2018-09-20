@@ -218,14 +218,11 @@ function buscarCodbar() {
         url: 'ajax/alistar.items.ajax.php',//url de la funcion
         type: 'post',//metodo post para mandar datos
         data: { "codigo": codigo, "req": req },//datos que se enviaran
-        dataType: 'json',
+        dataType: 'JSON',
         success: function (res) {
-            
             agregarItem(res);
-            
             $('#codbarras').val("");
         }
-
     });
 
 
@@ -268,42 +265,48 @@ function recargarItems(){
 
 //FUNCION QUE AGREGA ITEM A LA TABLA EDITABLE
 function agregarItem(res) {
-
+    
     //busca el estado de del resultado
     //si encontro el codigo de barras muestar el contenido de la busqueda
     if (res['estado'] == 'encontrado') {
+
         var items = res['contenido'];
-
-        swal(`${items['descripcion']}` ,`disponibilidad: ${items['disponibilidad']}\t pedidos: ${items['pedidos']} `, {
-            content: {
-                element: "input",
-                attributes: {
-                  placeholder: "Cantidad a alistar",
-                  type: "number",
+        
+        if (items) {
+            swal(`${items['descripcion']}` ,`disponibilidad: ${items['disponibilidad']}\t pedidos: ${items['pedidos']} `, {
+                content: {
+                    element: "input",
+                    attributes: {
+                    placeholder: "Cantidad a alistar",
+                    type: "number",
+                    },
                 },
-              },
-          })
-          .then((value) => {
-              if (!value) {
-                  value=1;
-              }
-              
-            //   se guarda el id del item en el id de la fila
-            $('#tablaeditable').append($(`<tr id='${items['iditem']}'>
-                                            <td>${items['descripcion']}</td>
-                                            <td><input type= 'number' min='1' class='alistados eliminaritem' value='${value}'>  </td>
-                                            <td><button  title='Eliminar Item' class='btn-floating btn-small waves-effect waves-light red darken-3 ' > 
-                                            <i class='fas fa-times'></i>" 
-                                            </button></tr></td>
-                                        </tr>`));
+            })
+            .then((value) => {
+                if (!value) {
+                    value=1;
+                }
+                
+                //   se guarda el id del item en el id de la fila
+                $('#tablaeditable').append($(`<tr id='${items['iditem']}'>
+                                                <td>${items['descripcion']}</td>
+                                                <td><input type= 'number' min='1' class='alistados eliminaritem' value='${value}'>  </td>
+                                                <td><button  title='Eliminar Item' class='btn-floating btn-small waves-effect waves-light red darken-3 ' > 
+                                                <i class='fas fa-times'></i>" 
+                                                </button></tr></td>
+                                            </tr>`));
 
-            // se muestra un mensaje con el item agregado
-            var toastHTML = '<p class="truncate">Agregado Item <span class="yellow-text">' + items['descripcion'] + '</span></p>';
-            M.toast({ html: toastHTML, classes: "light-green darken-4 rounded",displayLength: 500 });
-        });
+                // se muestra un mensaje con el item agregado
+                var toastHTML = '<p class="truncate">Agregado Item <span class="yellow-text">' + items['descripcion'] + '</span></p>';
+                M.toast({ html: toastHTML, classes: "light-green darken-4 rounded",displayLength: 500 });
+            });
 
-        $("#TablaE").removeClass("hide");
-
+            $("#TablaE").removeClass("hide");
+        }else{
+            swal('Item ya fue alistado en otra caja', {
+                icon: "warning",
+            });
+        }
         //si no encontro el item regresa el contenido del error(razon por la que no lo encontro)
     } else {
         swal(res['contenido'], {
