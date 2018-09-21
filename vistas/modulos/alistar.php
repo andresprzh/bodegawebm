@@ -103,6 +103,7 @@
             <tr  class="white-text green darken-3" >
 
                 <th>Item</th>
+                <th>Solicitados</th>
                 <th>Alistados</th>
                 <th class='grey-text'><i class='fas fa-times-circle'></i></th>
                 

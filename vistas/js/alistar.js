@@ -37,7 +37,7 @@ $(document).ready(function () {
         $.when(mostrarItems()).done(function () {
             
             $.when( mostrarCaja()).done(function () {
-                
+                $( "#codbarras" ).focus();
             });   
         });
 
@@ -47,7 +47,7 @@ $(document).ready(function () {
     $("#ubicacion").change(function (e) { 
 
         cambiarUbicacion();
-
+        $( "#codbarras" ).focus();
     });
 
     // EVENTO INPUT  CODIGO DE BARRAS
@@ -59,7 +59,9 @@ $(document).ready(function () {
             $.when(buscarCodbar()).done(function () {
                 $.when(mostrarItems()).done(function () {
                     $('#ubicacion').val(ubicacion);
+                    console.log($('#ubicacion').val())
                     cambiarUbicacion();
+                    
                 });   
             });
             
@@ -222,6 +224,7 @@ function buscarCodbar() {
         success: function (res) {
             agregarItem(res);
             $('#codbarras').val("");
+            $( "#codbarras" ).focus();
         }
     });
 
@@ -290,6 +293,7 @@ function agregarItem(res) {
                 //   se guarda el id del item en el id de la fila
                 $('#tablaeditable').append($(`<tr id='${items['iditem']}'>
                                                 <td>${items['descripcion']}</td>
+                                                <td>${items['pedidos']}</td>
                                                 <td><input type= 'number' min='1' class='alistados eliminaritem' value='${value}'>  </td>
                                                 <td><button  title='Eliminar Item' class='btn-floating btn-small waves-effect waves-light red darken-3 ' > 
                                                 <i class='fas fa-times'></i>" 
@@ -299,19 +303,25 @@ function agregarItem(res) {
                 // se muestra un mensaje con el item agregado
                 var toastHTML = '<p class="truncate">Agregado Item <span class="yellow-text">' + items['descripcion'] + '</span></p>';
                 M.toast({ html: toastHTML, classes: "light-green darken-4 rounded",displayLength: 500 });
+                $( "#codbarras" ).focus();
             });
 
             $("#TablaE").removeClass("hide");
         }else{
             swal('Item ya fue alistado en otra caja', {
                 icon: "warning",
+            }).then((value) => {
+                $( "#codbarras" ).focus();
             });
+            
         }
         //si no encontro el item regresa el contenido del error(razon por la que no lo encontro)
     } else {
         swal(res['contenido'], {
             icon: "warning",
-        })
+        }).then((value) => {
+            $( "#codbarras" ).focus();
+        });
     }
 
 }
@@ -403,9 +413,10 @@ function mostrarCaja() {
                     
                     for (var i in items) {
                         
-                        // se guerda el id del item en el id de la fila
+                        // se guerda el id del item en el id de la fila 
                         $('#tablaeditable').append($(`<tr id='${items[i]['iditem']}'>
                                             <td>${items[i]['descripcion']}</td>
+                                            <td>${items[i]['pedidos']}</td>
                                             <td><input type= 'number' min='1' class='alistados eliminaritem' value='1'></td>
                                             <td><button  title='Eliminar Item' class='btn-floating btn-small waves-effect waves-light red darken-3 ' > 
                                             <i class='fas fa-times'></i>" 
@@ -439,7 +450,7 @@ function cambiarUbicacion(){
     
     $("#TablaVi").removeClass("hide");
     // evita que alistadores vean todos los items
-    if (perfil==3 &&  ubicacion=='') {
+    if (perfil==3 &&  (ubicacion=='' || !ubicacion)) {
         ubicacion='---';
     }
     
