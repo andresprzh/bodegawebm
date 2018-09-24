@@ -96,6 +96,7 @@
         <br>
         <br>
         <br>
+        <form id="formalistados">
         <table class="striped centered " id="TablaEd"  style="width:100%">
         
             <thead>
@@ -143,7 +144,7 @@
 
                         <div class="input-field col s4 m2 l2">
 
-                            <button id="cerrar" class="btn waves-effect tea darken-4 col s12 m12 l8" >
+                            <button id="cerrar" type="submit" class="btn waves-effect tea darken-4 col s12 m12 l8" >
                                 Cerrar
                             </button>
                             
@@ -156,6 +157,7 @@
             </div>
 
         </div>
+        </form>
             
     </div>
 
