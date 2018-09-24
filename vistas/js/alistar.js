@@ -9,14 +9,13 @@ $(document).ready(function () {
 
     // pone requisiciones en el input select
     $.ajax({
-        url: "ajax/alistar.requisicion.ajax.php",
-        method: "POST",
+        url: "api/alistar/requisiciones",
+        method: "GET",
         data: '',
         contentType: false,
         processData: false,
         dataType: "json",
         success: function (res) {
-
             // SE MUESTRAN LAS reqUISICIONES EN EL MENU DE SELECCION
             for (var i in res) {
 
@@ -59,7 +58,6 @@ $(document).ready(function () {
             $.when(buscarCodbar()).done(function () {
                 $.when(mostrarItems()).done(function () {
                     $('#ubicacion').val(ubicacion);
-                    console.log($('#ubicacion').val())
                     cambiarUbicacion();
 
                 });
@@ -217,11 +215,11 @@ $(document).ready(function () {
 
 
                 $.ajax({
-                    url: 'ajax/alistar.empacar.ajax.php',//url de la funcion
+                    url: 'api/alistar/empacar',//url de la funcion
                     method: 'post',//metodo post para mandar datos
-                    data: { 'req': req, "tipocaja": tipocaja, "items": items },//datos que se enviaran          
+                    data: { 'req': req, "tipocaja": tipocaja, "items": items },//datos que se enviaran 
+                    dataType: 'JSON',
                     success: function (res) {
-
                         if (res) {
 
                             swal("¡Caja cerrada exitosamente!", {
@@ -266,11 +264,14 @@ function buscarCodbar() {
 
     // ajax para ejecutar un script php mandando los datos
     return $.ajax({
-        url: 'ajax/alistar.items.ajax.php',//url de la funcion
+        // url: 'ajax/alistar.items.ajax.php',//url de la funcion
+        url: 'api/alistar/items',//url de la funcion
         type: 'post',//metodo post para mandar datos
         data: { "codigo": codigo, "req": req },//datos que se enviaran
         dataType: 'JSON',
         success: function (res) {
+            // console.log(res);
+            // return 0;
             agregarItem(res);
             $('#codbarras').val("");
             $("#codbarras").focus();
@@ -285,7 +286,8 @@ function eliminarItem(iditem, req) {
 
     return $.ajax({
         type: "POST",
-        url: "ajax/alistar.eliminar.ajax.php",
+        // url: "ajax/alistar.eliminar.ajax.php",
+        url: "api/alistar/eliminaritem",
         data: { "iditem": iditem, "req": req },
         dataType: "JSON",
         success: function (res) {
@@ -425,12 +427,12 @@ function mostrarItems() {
 
     return $.ajax({
 
-        url: 'ajax/alistar.items.ajax.php',
-        method: 'POST',
+        url: 'api/alistar/items',//url de la funcion
+        method: 'GET',  
         data: { 'req': req },
         dataType: 'JSON',
         success: function (res) {
-
+            
             //si encuentra el item mostrarlo en la tabla
             if (res['estado'] != 'error') {
 
@@ -484,7 +486,8 @@ function mostrarCaja() {
 
     return $.ajax({
 
-        url: 'ajax/alistar.cajas.ajax.php',
+        // url: 'ajax/alistar.cajas.ajax.php',
+        url: 'api/alistar/cajas',
         method: 'POST',
         data: { 'req': req },
         dataType: 'JSON',

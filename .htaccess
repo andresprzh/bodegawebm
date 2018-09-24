@@ -3,3 +3,7 @@ Options All -Indexes
 RewriteEngine On
 
 RewriteRule ^([-a-zA-Z0-9]+)$ index.php?ruta=$1
+
+# REGLAS PARA LA REST API
+RewriteRule ^api/alistar/([-a-zA-Z0-9/]+)$ api/alistar.php?ruta=$1 [QSA,NC,L]
+# RewriteRule ^alistar2/([-a-zA-Z0-9/]+)$ eliminar.php?ruta=$1 [QSA,NC,L]
