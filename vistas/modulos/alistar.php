@@ -19,31 +19,29 @@
 ============================================================================================================================-->
 
 <div class="row " id="contenido"  >
-    
-    <div class="col s12" id="tabsmenu">
-        
-            <ul class="tabs ">
-                <li class="tab col s6" id="tabsI1">
-                    <a class="black-text"  href="#TablaV">
-                        <i class="fas fa-clipboard-list"></i>
-                        <span style="font-size:100%"> Items por alistar</span>
-                    </a>
-                </li>
-                <li class="tab col s6 " id="tabsI2">
-                    <a class="black-text"  href="#TablaE">
-                        <i class="fas fa-box-open"></i>
-                        <span style="font-size:100%"> Caja en proceso</span>
-                    </a>
-                </li>
-            </ul>
+            
+    <ul class="tabs col s12 " id="tabsmenu" >
+        <li class="tab col s6" id="tabsI1">
+            <a class="black-text"  href="#TablaV">
+                <i class="fas fa-clipboard-list"></i>
+                <span style="font-size:100%"> Items por alistar</span>
+            </a>
+        </li>
+        <li class="tab col s6 " id="tabsI2">
+            <a class="black-text"  href="#TablaE">
+                <i class="fas fa-box-open"></i>
+                <span style="font-size:100%"> Caja en proceso</span>
+            </a>
+        </li>
+    </ul>
 
-    </div>
+    
     <!-- ==============================================================
                             TABLA VISTA O MUESTRA    
     ============================================================== -->
     
     <div  id="TablaV" >
-        <div class="row entradas hide ">
+        <div class=" entradas hide ">
             <div class="col s9">
                 <select  list="ubicacion" name="ubicacion" class="browser-default " id="ubicacion">
                     <option value=""  selected>Ubicacion</option>
