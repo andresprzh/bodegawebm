@@ -43,10 +43,16 @@ class ControladorUsuarios {
                                           "usuario" => $respuesta["usuario"],
                                           "perfil" => $respuesta["perfil"]
                                         ];
-                    
-                    echo '<script>
+                    if ($respuesta["perfil"]==3) {
+                        echo '<script>
                             window.location="alistar";
                           </script>';
+                    }else {
+                        echo '<script>
+                            window.location="transportador";
+                          </script>';
+                    }
+                    
                     
                     
                 //de lo contrario muestra un mensaje de alerta

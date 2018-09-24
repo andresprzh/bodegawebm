@@ -52,14 +52,13 @@
 
   <?php
   
-  if(isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"]=="ok" && $_SESSION["usuario"]["perfil"]==3){
+  if(isset($_SESSION["iniciarSesion"]) && $_SESSION["iniciarSesion"]=="ok" && in_array($_SESSION["usuario"]["perfil"],[3,6])){
     
     /* ============================================================================================================================
                 BARRA DE NAVEGACION
     ============================================================================================================================== */
     include "modulos/navbar.php";
     
-  
     echo "<main>";
      /* =================================================================================================================================
                              CONTENIDO
@@ -79,10 +78,12 @@
         include "modulos/404.php";
       }
 
-    }else{
-
-        include "modulos/alistar.php";
-
+    }elseif($_SESSION["usuario"]["perfil"]===3){
+      print($_SESSION["usuario"]["perfil"]);
+        // include "modulos/alistar.php";
+      
+    }else {
+        include "modulos/transportador.php";
     }
     echo "</main>";
 
