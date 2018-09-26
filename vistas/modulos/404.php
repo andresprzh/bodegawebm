@@ -19,7 +19,7 @@
                 Pagina no encontrada
             </h3>
             <h4 class=''>
-                Regrese al inicio <a href="alistar">click aquí</a>
+                Regrese al inicio <a href="./">click aquí</a>
             </h4>
         </div> 
     </div>

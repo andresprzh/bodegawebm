@@ -59,28 +59,37 @@
     ============================================================================================================================== */
     include "modulos/navbar.php";
     
+    $alistador=[
+      "inicio",
+      "alistar",
+      "salir"
+    ];
+     $transportador=[
+      "inicio",
+      "transportador",
+      "salir"
+    ];
     echo "<main>";
      /* =================================================================================================================================
                              CONTENIDO
         =================================================================================================================================*/
     if (isset($_GET["ruta"])) {
 
-      if ($_GET["ruta"]=="salir") {
-  
-        include "modulos/salir.php";
+      if ($_SESSION["usuario"]["perfil"]==3 && in_array($_GET["ruta"],$alistador)) {
+        
+        include "modulos/".$_GET["ruta"].".php";
 
-      }
-      elseif($_GET["ruta"]=="alistar"){
-
-        include "modulos/alistar.php";
-
+      }elseif ($_SESSION["usuario"]["perfil"]==6 && in_array($_GET["ruta"],$transportador)) {
+        
+        include "modulos/".$_GET["ruta"].".php";
+        
       }else{
         include "modulos/404.php";
       }
 
     }elseif($_SESSION["usuario"]["perfil"]===3){
       print($_SESSION["usuario"]["perfil"]);
-        // include "modulos/alistar.php";
+        include "modulos/alistar.php";
       
     }else {
         include "modulos/transportador.php";
