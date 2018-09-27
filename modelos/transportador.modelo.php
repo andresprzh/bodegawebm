@@ -46,16 +46,17 @@ class ModeloTransportador extends Conexion{
     {
         $tra=$this->transportador;
         $stmt= $this->link-> prepare("SELECT requisicion.lo_origen,requisicion.lo_destino,
-        sedes.descripcion,sedes.direccion1 as direccion,caja.tipo_caja,caja.no_caja
+        sedes.descripcion,sedes.direccion1 as direccion,tipo_caja.descripcion as tipo_caja,caja.no_caja
         FROM caja
         INNER JOIN pedido ON caja.no_caja=pedido.no_caja
         INNER JOIN requisicion ON pedido.no_req=requisicion.no_req
         INNER JOIN sedes ON requisicion.lo_destino=sedes.codigo
+        INNER JOIN tipo_caja on caja.tipo_caja=tipo_caja.tipo_caja
         WHERE DATE(caja.enviado)=DATE(NOW())
         AND transportador=:transportador
         AND caja.estado=2
-        GROUP BY requisicion.lo_origen,requisicion.lo_destino,sedes.descripcion,sedes.direccion1,caja.tipo_caja,caja.no_caja
-        ORDER BY requisicion.lo_destino ASC,caja.tipo_caja ASC");
+        GROUP BY requisicion.lo_origen,requisicion.lo_destino,sedes.descripcion,sedes.direccion1,tipo_caja.descripcion,caja.no_caja
+        ORDER BY requisicion.lo_destino ASC,caja.tipo_caja ASC;");
 
         //para evitar sql injection
         $stmt->bindParam(":transportador",$tra,PDO::PARAM_INT);
