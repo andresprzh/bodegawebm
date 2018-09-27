@@ -68,6 +68,10 @@ class ControladorAlistar {
                         $itembus["estado"]='error2';
                         $itembus["contenido"]='Item ya alistado en la caja '.$itembus['contenido']['caja'].' por '.$itembus['contenido']['alistador'];
                         break;
+                    case 3:
+                        $itembus["estado"]='error1';
+                        $itembus["contenido"]='Item ya alistado en la caja '.$itembus['contenido']['caja'].' por '.$itembus['contenido']['alistador'];
+                        break;
                 }
                 //retorna el item a la funcion
                 return $itembus;

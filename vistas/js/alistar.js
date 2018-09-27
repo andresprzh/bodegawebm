@@ -374,8 +374,6 @@ function agregarItem(res) {
                         colorwarning='yellow lighten-2';
                         titlewarning='Revisar cantidad alistada'
                     }
-                    console.log(value);
-                    console.log(maxvalue);
 
                     //   se guarda el id del item en el id de la fila
                     $('#tablaeditable').append($(`<tr
