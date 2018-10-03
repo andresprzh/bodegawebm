@@ -81,8 +81,17 @@ if (isset($_GET['ruta'])) {
                 
                 //crea objeto controlador 
                 $controlador=new ControladorAlistar($req);
+
+                //si se buca un item en epsecifico
+                if (isset($_GET['codigo'])) {
+
+                    $cod_barras=$_GET['codigo'];
+                // de lo contrario se muestran todos los items    
+                }else {
+                    $cod_barras='%%';
+                }
                 // regresa el resultado de la buqueda como un objeto JSON
-                $respuesta=$controlador->ctrBuscarItems('%%');
+                $respuesta=$controlador->ctrBuscarItems($cod_barras);
                 print json_encode( $respuesta);
 
             // BUSCA UN ITEM ESPECIFICO DE LA REQUISICION
@@ -91,15 +100,10 @@ if (isset($_GET['ruta'])) {
                 $controlador=new ControladorAlistar($req);
 
 
-                // si se pasa el codigo de barras del item se busca dicho item y se crea la caja a nombre del alistador que realizo el login
-                if (isset($_POST['codigo'])) {
-
-                    $cod_barras=$_POST['codigo'];
-
-                }
+                $item=$_POST['item'];
 
                 // regresa el resultado de la buqueda como un objeto JSON
-                $respuesta=$controlador->ctrBuscarItems($cod_barras);
+                $respuesta=$controlador->ctrAlistarItem($item);
 
                 // muestra el vector como dato JSON
                 print json_encode( $respuesta);

@@ -27,17 +27,18 @@ class ModeloAlistar extends Conexion{
         $iditem=$items["iditem"];
         $alistados=$items["alistados"];
         
-        $stmt= $this->link->prepare('UPDATE pedido
-		SET alistado=:alistados,estado=2
-		WHERE Item=:iditem
-		AND no_req=:no_req;
-        ');
+        $stmt= $this->link->prepare('INSERT INTO alistado(item,no_caja,alistado) 
+        VALUES(:iditem,:no_caja,:alistados)
+        ON DUPLICATE KEY UPDATE
+        alistado=:alistados,
+        estado=2;');
 
         $stmt->bindParam(":iditem",$iditem,PDO::PARAM_STR);
+        $stmt->bindParam(":no_caja",$numcaja,PDO::PARAM_INT);
         $stmt->bindParam(":alistados",$alistados,PDO::PARAM_INT);
-        $stmt->bindParam(":no_req",$no_req,PDO::PARAM_STR);
 
         $res=$stmt->execute();
+        
         $stmt->closeCursor();
         // retorna el resultado de la sentencia
 	    return $res;
@@ -87,17 +88,19 @@ class ModeloAlistar extends Conexion{
         $stmt=null;
     }
 
-    // saca el item de una caja cambiando la caja a 1 su estado a 0 y la cantidad alistada a 0
+    // saca el item de una caja eliminandolo de la tabla alistado
     public function mdlEliminarItemCaja($item,$no_caja){
+
         $no_req=$this->req[0];$alistador=$this->req[1];
         
-        
-        $sql="UPDATE pedido SET no_caja=1,estado=0,alistado=0 WHERE item=:item AND no_req=:no_req; AND no_caja=:no_caja";
+        // $sql="UPDATE pedido SET no_caja=1,estado=0,alistado=0 WHERE item=:item AND no_req=:no_req; AND no_caja=:no_caja";
+        $sql="DELETE FROM alistado 
+        WHERE item=:item 
+        AND no_caja=:no_caja;";
 
         $stmt= $this->link->prepare($sql);
 
         $stmt->bindParam(":item",$item,PDO::PARAM_STR);
-        $stmt->bindParam(":no_req",$no_req,PDO::PARAM_STR);
         $stmt->bindParam(":no_caja",$no_caja,PDO::PARAM_INT);
 
         $res=$stmt->execute();
@@ -112,11 +115,10 @@ class ModeloAlistar extends Conexion{
     public function mdlMostrarItems($cod_barras){
         
         $no_req=$this->req[0];$alistador=$this->req[1];
-        $stmt= $this->link->prepare("CALL buscarcod(:cod_barras,:no_req,:alistador,'%%');");
+        $stmt= $this->link->prepare("CALL buscarcod(:cod_barras,:no_req,NULL);");
 
         $stmt->bindParam(":cod_barras",$cod_barras,PDO::PARAM_STR);
         $stmt->bindParam(":no_req",$no_req,PDO::PARAM_STR);
-        $stmt->bindParam(":alistador",$alistador,PDO::PARAM_INT);
 
         $stmt->execute();
 
@@ -131,11 +133,9 @@ class ModeloAlistar extends Conexion{
 
     public function mslMostrarItemsCaja($numcaja){
         $no_req=$this->req[0];$alistador=$this->req[1];
+
+        $stmt= $this->link->prepare("CALL buscarcod('%%','%%',:numcaja);");
         
-
-        $stmt= $this->link->prepare("CALL buscarcod('%%','%%',:alistador,:numcaja);");
-
-        $stmt->bindParam(":alistador",$alistador,PDO::PARAM_INT);
         $stmt->bindParam(":numcaja",$numcaja,PDO::PARAM_STR);
 
         $stmt->execute();
@@ -151,17 +151,17 @@ class ModeloAlistar extends Conexion{
         
         $alistador=$this->req[1];
          
-         $stmt= $this->link->prepare("SELECT numerocaja(:alistador) AS numcaja");
- 
-         $stmt->bindParam(":alistador",$alistador,PDO::PARAM_INT);
- 
-         $res=$stmt->execute();
- 
-         
-         return $stmt;
- 
-         // cierra la conexion
-         $stmt=null;
+        $stmt= $this->link->prepare("SELECT numerocaja(:alistador) AS numcaja;");
+
+        $stmt->bindParam(":alistador",$alistador,PDO::PARAM_INT);
+
+        $res=$stmt->execute();
+
+        
+        return $stmt;
+
+        // cierra la conexion
+        $stmt=null;
  
      }
 

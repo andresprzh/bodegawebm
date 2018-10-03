@@ -16,6 +16,7 @@ $(document).ready(function () {
         processData: false,
         dataType: "json",
         success: function (res) {
+
             // SE MUESTRAN LAS reqUISICIONES EN EL MENU DE SELECCION
             for (var i in res) {
 
@@ -50,7 +51,7 @@ $(document).ready(function () {
     });
 
     // EVENTO INPUT  CODIGO DE BARRAS
-    $("#codbarras").keypress(function (e) {
+    $("#codbarras").keyup(function (e) {
 
         //si se presiona enter busca el item y lo pone en la pagina
         if (e.which == 13) {
@@ -67,6 +68,8 @@ $(document).ready(function () {
         }
 
     });
+
+
 
     // EVENTO CUANDO SE ESCRIBE EN EL INPUT DE LA TABLA EDITABLE(EVITA QUE SE DIGITEN LETRAS)
     $('#tablaeditable').on('keydown', 'input', function (e) {
@@ -147,10 +150,11 @@ $(document).ready(function () {
         //id usuario es obtenida de las variables de sesion
         var req = [requeridos, id_usuario];
 
-        // se consigue el id del item y el nombre
-        let iditem = $(this).closest('tr').attr('id');
-        const nomitem = $('td:first', $(this).parents('tr')).text();;
+        // se consigue el id del item y el nombre se quita la primera letra del id que representa en que tabla esta
+        let iditem = $(this).closest('tr').attr('id').substr(1);
 
+
+        const nomitem = $('td:first', $(this).parents('tr')).text();;
 
         // Pregunta si se elimina el item
         swal({
@@ -266,13 +270,12 @@ function buscarCodbar() {
     return $.ajax({
         // url: 'ajax/alistar.items.ajax.php',//url de la funcion
         url: 'api/alistar/items',//url de la funcion
-        type: 'post',//metodo post para mandar datos
+        type: 'GET',//metodo post para mandar datos
         data: { "codigo": codigo, "req": req },//datos que se enviaran
         dataType: 'JSON',
         success: function (res) {
-            // console.log(res);
-            // return 0;
-            agregarItem(res);
+
+            agregarItem(res, req);
             $('#codbarras').val("");
             $("#codbarras").focus();
         }
@@ -280,6 +283,7 @@ function buscarCodbar() {
 
 
 }
+
 
 // FUNCIONQ UE QUITA UN ITEM DE LA CAJA
 function eliminarItem(iditem, req) {
@@ -293,8 +297,7 @@ function eliminarItem(iditem, req) {
         success: function (res) {
 
             if (res != false) {
-
-                $(`#${iditem}`).remove();
+                $(`#E${iditem}`).remove();
             } else {
                 var toastHTML = '<p class="truncate">No se pudo eliminar el item</span></p>';
                 M.toast({ html: toastHTML, classes: "red darken-4" });
@@ -318,16 +321,15 @@ function recargarItems() {
 }
 
 //FUNCION QUE AGREGA ITEM A LA TABLA EDITABLE
-function agregarItem(res) {
+function agregarItem(res, req) {
 
     //busca el estado de del resultado
     //si encontro el codigo de barras muestar el contenido de la busqueda
     if (res['estado'] == 'encontrado') {
 
-        var items = res['contenido'];
-
-        if (items) {
-            swal(`${items['descripcion']}`, `disponibilidad: ${items['disponibilidad']}\t pedidos: ${items['pedidos']} `, {
+        let item = res['contenido'];
+        if (item) {
+            swal(`${item['descripcion']}`, `disponibilidad: ${item['disponibilidad']}\t pedidos: ${item['pedidos']} `, {
                 content: {
                     element: "input",
                     attributes: {
@@ -337,11 +339,10 @@ function agregarItem(res) {
                 },
             })
                 .then((value) => {
-                    
                     // consigue el valor maximo en decenas que puede valer la cantidad de alistados
                     // EJ: entre 0 y 10 maximo valor=100, entre 11 y 100 maximo valor 1000
                     let a = 0;
-                    let pot = items['pedidos'];
+                    let pot = item['pedidos'];
 
                     do {
                         a++;
@@ -350,49 +351,75 @@ function agregarItem(res) {
 
                     let maxvalue = Math.pow(10, a)
 
-                    let colorwarning='';
-                    let titlewarning='';
+                    let colorwarning = '';
+                    let titlewarning = '';
                     if (!value) {
-
                         value = 1;
+                    }
+                    if (value < maxvalue * 10) {
 
-                    }else if (value > maxvalue * 10) {
+                        if (value > maxvalue) {
 
-                        var toastHTML = `<p class="truncate black-text"><i class="fas fa-exclamation-circle"></i> Revisar cantidad alistada</span></p>`;
+                            var toastHTML = `<p class='truncate black-text'><i class='fas fa-exclamation-circle'></i> Revisar cantidad alistada</span></p>`;
+                            M.toast({
+                                html: toastHTML, classes: 'yellow lighten-2',
+                            });
+                            colorwarning = 'yellow lighten-2';
+                            titlewarning = 'Revisar cantidad alistada';
+
+                        }
+
+
+                    } else {
+
+                        var toastHTML = `<p class="truncate black-text"><i class="fas fa-exclamation-circle"></i>Cantidad alistada es muy grande</span></p>`;
                         M.toast({
                             html: toastHTML, classes: "red lighten-2'",
                         });
-                        colorwarning='red lighten-2';
-                        titlewarning='Revisar cantidad alistada'
+                        colorwarning = 'yellow lighten-2';
+                        titlewarning = 'Revisar cantidad alistada';
+                        value = 1;
 
-                    } else if (value > maxvalue) {
-
-                        var toastHTML = `<p class='truncate black-text'><i class='fas fa-exclamation-circle'></i> Revisar cantidad alistada</span></p>`;
-                        M.toast({
-                            html: toastHTML, classes: 'yellow lighten-2',
-                        });
-                        colorwarning='yellow lighten-2';
-                        titlewarning='Revisar cantidad alistada'
                     }
+                    item['alistados'] = value;
 
-                    //   se guarda el id del item en el id de la fila
-                    $('#tablaeditable').append($(`<tr
-                                                   id='${items['iditem']}'
-                                                   class='${colorwarning}'
-                                                   title='${titlewarning}'
-                                                  >
-                                                    <td>${items['descripcion']}</td>
-                                                    <td>${items['pedidos']}</td>
-                                                    <td><input type= 'number' min='1' class='alistados eliminaritem' min=1 max=${maxvalue*10} required value='${value}'>  </td>
-                                                    <td><button  title='Eliminar Item' class='btn-floating btn-small waves-effect waves-light red darken-3 ' > 
-                                                        <i class='fas fa-times'></i>" 
-                                                    </button></tr></td>
-                                                  </tr>`));
+                    return $.ajax({
+                        // url: 'ajax/alistar.items.ajax.php',//url de la funcion
+                        url: 'api/alistar/items',//url de la funcion
+                        type: 'POST',//metodo post para mandar datos
+                        data: { 'item': item, 'req': req },//datos que se enviaran
+                        dataType: 'JSON',
+                        success: function (res) {
+                            if (res) {
+                                //   se guarda el id del item en el id de la fila
+                                $('#tablaeditable').append($(`<tr
+                                                    id='E${item['iditem']}'
+                                                    class='${colorwarning}'
+                                                    title='${titlewarning}'
+                                                    >
+                                                        <td>${item['descripcion']}</td>
+                                                        <td>${item['pedidos']}</td>
+                                                        <td><input type= 'number' min='1' class='alistados eliminaritem' min=1 max=${maxvalue * 10} required value='${item['alistados']}'>  </td>
+                                                        <td><button  title='Eliminar Item' class='btn-floating btn-small waves-effect waves-light red darken-3 ' > 
+                                                            <i class='fas fa-times'></i>" 
+                                                        </button></tr></td>
+                                                    </tr>`));
 
-                    // se muestra un mensaje con el item agregado
-                    var toastHTML = `<p class='truncate'>Agregado Item <span class='yellow-text'>${items['descripcion']}</span></p>`;
-                    M.toast({ html: toastHTML, classes: 'light-green darken-4 rounded', displayLength: 500 });
-                    $('#codbarras').focus();
+                                // se muestra un mensaje con el item agregado
+                                var toastHTML = `<p class='truncate'>Agregado Item <span class='yellow-text'>${item['descripcion']}</span></p>`;
+                                M.toast({ html: toastHTML, classes: 'light-green darken-4 rounded', displayLength: 500 });
+                                $('#codbarras').focus();
+                            } else {
+                                swal('Error al alistar el item', {
+                                    icon: 'error',
+                                }).then((value) => {
+                                    $('#codbarras').focus();
+                                });
+                            }
+                        }
+                    });
+
+
                 });
 
             $('#TablaE').removeClass('hide');
@@ -426,11 +453,10 @@ function mostrarItems() {
     return $.ajax({
 
         url: 'api/alistar/items',//url de la funcion
-        method: 'GET',  
+        method: 'GET',
         data: { 'req': req },
         dataType: 'JSON',
         success: function (res) {
-            
             //si encuentra el item mostrarlo en la tabla
             if (res['estado'] != 'error') {
 
@@ -443,7 +469,7 @@ function mostrarItems() {
                 for (let i in items) {
 
                     // se guarda el id del item en el id de la fila
-                    $('#tablavista').append($(`<tr id='${items[i]['iditem']}'>
+                    $('#tablavista').append($(`<tr id='V${items[i]['iditem']}'>
                                             <td>${items[i]['descripcion']}</td>
                                             <td>${items[i]['disponibilidad']}</td>
                                             <td>${items[i]['pedidos']}</td>
@@ -501,7 +527,6 @@ function mostrarCaja() {
 
                     var items = res['contenido'];
                     let maxvalue;
-
                     for (var i in items) {
                         // consigue el valor maximo en decenas que puede valer la cantidad de alistados
                         // EJ: entre 0 y 10 maximo valor=100, entre 11 y 100 maximo valor 1000
@@ -514,10 +539,10 @@ function mostrarCaja() {
                         maxvalue = Math.pow(10, a) * 10
 
                         // se guerda el id del item en el id de la fila 
-                        $('#tablaeditable').append($(`<tr id='${items[i]['iditem']}'>
+                        $('#tablaeditable').append($(`<tr id='E${items[i]['iditem']}'>
                                             <td>${items[i]['descripcion']}</td>
-                                            <td>${items[i]['pedidos']}</td>
-                                            <td><input type= 'number' min='1' class='alistados eliminaritem' min=1 max=${maxvalue} required value='1'></td>
+                                            <td>${items[i]['pedido']}</td>
+                                            <td><input type= 'number' min='1' class='alistados eliminaritem' min=1 max=${maxvalue} required value='${items[i]['alistado']}'></td>
                                             <td><button  title='Eliminar Item' class='btn-floating btn-small waves-effect waves-light red darken-3 ' > 
                                             <i class='fas fa-times'></i>
                                             </button></tr></td>
