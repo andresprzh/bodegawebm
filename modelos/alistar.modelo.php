@@ -146,8 +146,72 @@ class ModeloAlistar extends Conexion{
         $stmt=null;
     }
 
+    public function mdlMostrarIE($item)
+    {
+
+        $no_req=$this->req[0];
+
+        $sql="SELECT ID_ITEM,ID_REFERENCIA,ID_CODBAR,DESCRIPCION 
+        FROM ITEMS
+        INNER JOIN COD_BARRAS ON ID_ITEMS=ID_ITEM
+        LEFT JOIN pedido on item=ID_ITEM
+        WHERE (ID_ITEM = :item
+        OR ID_REFERENCIA = :item
+        OR DESCRIPCION LIKE :descripcion
+        OR ID_CODBAR = :item)
+        AND (no_req <> :no_req
+        OR no_req IS NULL);";
+
+        $stmt= $this->link->prepare($sql);
+        $descripcion="%".$item."%";
+        $stmt->bindParam(":item",$item,PDO::PARAM_STR);
+        $stmt->bindParam(":descripcion",$descripcion,PDO::PARAM_STR);
+        $stmt->bindParam(":no_req",$no_req,PDO::PARAM_STR);
+
+        $stmt->execute();
+
+        return $stmt;
+
+        // cierra la conexion
+        $stmt=null;
+
+    }
+
+    public function mdlAgregarIE($items)
+    {
+        // guarda datos de la requisicion
+        $no_req=$this->req[0];$persona=$this->req[1];
+        $datos="";
+        for($i=0;$i<count($items);$i++) {
+            $datos.="(:item$i,:no_req,1,'----',:pedido$i,:pedido$i,0,0),";
+        }
+
+        $datos=substr($datos, 0, -1).';';
+
+        $sql='INSERT INTO pedido VALUES'. $datos;
+
+        $stmt= $this->link->prepare($sql);
+
+        $i=0;
+        foreach ($items as $row) {
+            
+            $stmt->bindParam(":item$i",$row['iditem'],PDO::PARAM_STR);
+            $stmt->bindParam(":pedido$i",$row['pedido'],PDO::PARAM_INT);
+            $i++;
+        }
+
+        $stmt->bindParam(":no_req",$no_req,PDO::PARAM_STR);
+        
+        
+        $res= $stmt->execute();
+        
+        // libera conexion para hace otra sentencia
+        $stmt->closeCursor();
+        return ($res); 
+    }
     //muestra el numero de la caja correspondiente a la requisicion
-    public function mdlMostrarNumCaja(){   
+    public function mdlMostrarNumCaja()
+    {   
         
         $alistador=$this->req[1];
          

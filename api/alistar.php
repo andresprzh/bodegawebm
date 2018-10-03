@@ -29,6 +29,8 @@ if (isset($_GET['ruta'])) {
 
             // muestra el vector como dato JSON
             print json_encode( $respuesta);
+            // termina la ejecucion del api
+            return 1;
 
             break;
 
@@ -46,7 +48,9 @@ if (isset($_GET['ruta'])) {
             $resultado=$controlador->ctrEliminarItemCaja($cod_barras);
             
             print json_encode($resultado);
-            
+            // termina la ejecucion del api
+            return 1;
+
             break;
 
         /* ============================================================================================================================
@@ -64,7 +68,8 @@ if (isset($_GET['ruta'])) {
             $respuesta=$controlador->ctrCerrarCaja($tipocaja,$items,$req);
 
             print json_encode($respuesta);
-
+            // termina la ejecucion del api
+            return 1;
             
             break;
 
@@ -86,13 +91,16 @@ if (isset($_GET['ruta'])) {
                 if (isset($_GET['codigo'])) {
 
                     $cod_barras=$_GET['codigo'];
-                // de lo contrario se muestran todos los items    
+                    $respuesta=$controlador->ctrBuscarItem($cod_barras);
+                // de lo contrario se muestran todos los items de la requisicion
                 }else {
-                    $cod_barras='%%';
+                    $respuesta=$controlador->ctrBuscarItemsReq();
                 }
-                // regresa el resultado de la buqueda como un objeto JSON
-                $respuesta=$controlador->ctrBuscarItems($cod_barras);
+                // regresa el resultado de la busqueda como un objeto JSON
                 print json_encode( $respuesta);
+
+                // termina la ejecucion del api
+                return 1;
 
             // BUSCA UN ITEM ESPECIFICO DE LA REQUISICION
             }else{
@@ -107,6 +115,9 @@ if (isset($_GET['ruta'])) {
 
                 // muestra el vector como dato JSON
                 print json_encode( $respuesta);
+
+                // termina la ejecucion del api
+                return 1;
             }
             break;
 
@@ -133,12 +144,17 @@ if (isset($_GET['ruta'])) {
                 }
                 // muestra el vector     como dato JSON
                 print json_encode($req);
-            }            
+                
+            }   
+            // termina la ejecucion del api
+            return 1;
             break;
             
             
         default:
             print json_encode("Best REST API :D");
+            // termina la ejecucion del api
+            return 1;
             break;
     }
 }

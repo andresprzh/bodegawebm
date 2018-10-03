@@ -126,7 +126,7 @@
 
                     <div class="row">
 
-                        <div class="input-field col s8 m7 l4 " >
+                        <div class="input-field col s4 m6 l4 " >
 
                             <select   name='caja'  class='carcaja browser-default ' id='caja'>
                                 
@@ -139,6 +139,13 @@
                             </select>
 
                         </div>
+
+                        <div class="input-field center col s4 m6 l4 input_barras">
+
+                            <input  id="peso" type="number" class="validate" required>
+                            <label for="peso" class="right">Peso en gr</label>
+
+                        </div> 
 
                         <div class="input-field col s4 m2 l2">
 

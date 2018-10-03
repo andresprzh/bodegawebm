@@ -22,35 +22,41 @@ class ControladorAlistar {
     ============================================================================================================================*/
 
     // busca los o el item en la tabla de alistado
-    public function ctrBuscarItems($cod_barras){
+    public function ctrBuscarItem($cod_barras)
+    {
         
+        // busca el numero de la ultima acaja abierta por el usuario
+        $busqueda = $this->modelo->mdlMostrarNumCaja();
+        $numcaja = ($busqueda->fetch());
+        $numcaja = $numcaja['numcaja'];
+        // libera conexion para hace otra sentencia
+        $busqueda->closeCursor();
+
         $busqueda=$this->modelo->mdlMostrarItems($cod_barras);
-        
 
         if ($busqueda->rowCount() > 0) {
 
-            if($busqueda->rowCount() == 1){
+                        
+            while($row = $busqueda->fetch()){
 
-                $row = $busqueda->fetch();
-
-                //guarda los resultados en un arreglo
-                $itembus=["estado"=>$row['estado'],
-                           "contenido"=> ["codigo"=>$row["ID_CODBAR"],
-                                           "iditem"=>$row["item"],  
-                                           "referencia"=>$row["ID_REFERENCIA"],
-                                           "descripcion"=>$row["DESCRIPCION"],
-                                           "disponibilidad"=>$row["disp"],
-                                           "pedidos"=>$row["pedido"],
-                                           "alistados"=>$row["alistado"],
-                                           "caja"=>$row["no_caja"],
-                                           "alistador"=>$row["nombre"],
-                                           "ubicacion"=>$row["ubicacion"],
-                                           "origen"=>$row["lo_origen"],
-                                           "destino"=>$row["lo_destino"]
-                                         ]
-                         ];
+                //solo muestra los items que no estan alistados
+                $itembus["estado"]=$row['estado'];                        
+                $itembus["contenido"][$row["item"]][]=["codigo"=>$row["ID_CODBAR"],
+                                        "iditem"=>$row["item"],  
+                                        "referencia"=>$row["ID_REFERENCIA"],
+                                        "descripcion"=>$row["DESCRIPCION"],
+                                        "disponibilidad"=>$row["disp"],
+                                        "pedidos"=>$row["pedido"],
+                                        "alistados"=>$row["alistado"],
+                                        "caja"=>$row["no_caja"],
+                                        "alistador"=>$row["nombre"],
+                                        "ubicacion"=>$row["ubicacion"],
+                                        "origen"=>$row["lo_origen"],
+                                        "destino"=>$row["lo_destino"]
+                                        ];
                 
-                // en el arreglo se guarda el estado de la consulta         
+                
+                // comprueba el estado del item pedido
                 switch ($itembus["estado"]) {
 
                     //0 si encontro algun resultaod en la consulta
@@ -61,47 +67,25 @@ class ControladorAlistar {
                     // 1 si el item ya esta siendo alistado pro alguien
                     case 1:
                         $itembus["estado"]="error1";
-                        $itembus["contenido"]="El item ya fue Alsitado";
+                        $itembus["contenido"]="El item ya fue Alistado";
+                        return $itembus;
                         break;
 
                 }
-                //retorna el item a la funcion
-                return $itembus;
-
-            }else {
-
-                $itembus["estado"]=["encontrado"];
-
-                $cont=0;
-
-                while($row = $busqueda->fetch()){
-
-                    //solo muestra los items que no estan alistados
-                    if($row["estado"]==0){
-                        
-                        $itembus["contenido"][]=["codigo"=>$row["ID_CODBAR"],
-                                           "iditem"=>$row["item"],  
-                                           "referencia"=>$row["ID_REFERENCIA"],
-                                           "descripcion"=>$row["DESCRIPCION"],
-                                           "disponibilidad"=>$row["disp"],
-                                           "pedidos"=>$row["pedido"],
-                                           "alistados"=>$row["alistado"],
-                                           'ubicacion'=>$row["ubicacion"]
-                                            ];
-                        
-                        $cont++;
-                        $itembus["ubicaciones"][$cont]=$row["ubicacion"];                          
-                    }
-
+                // si el item ya esta en la caja del alistador se regresa un mensaje informando 
+                if ($numcaja==$row["no_caja"]) {
+                    $itembus["estado"]="error2";
+                    $itembus["contenido"]="Item ya esta en la caja";
+                    return $itembus;
                 }
                 
-                if ($cont>0) {
-                    $itembus["ubicaciones"]=array_unique($itembus["ubicaciones"]);
-                }
-                
-                return $itembus;
 
             }
+            
+            // en el arreglo se guarda el estado de la consulta         
+            
+            //retorna el item a la funcion
+            return $itembus;
 
         //si no encuentra resultados devuelve "error"
         }else{
@@ -112,8 +96,119 @@ class ControladorAlistar {
         }
     }
 
+    // busca todos los items de la tabla pedido de una requisicion
+    public function ctrBuscarItemsReq()
+    {
+        $busqueda=$this->modelo->mdlMostrarItems('%%');
+        if ($busqueda->rowCount() > 0) {
+
+            
+            $itembus["estado"]="encontrado";
+
+            $cont=0;
+
+            while($row = $busqueda->fetch()){
+
+                //solo muestra los items que no estan alistados
+                if($row["estado"]==0){
+                    
+                    // se usa el id del item como el index en el arreglo
+                    // si se encuentra 2 veces el mismo item este se remplaza
+                    $itembus["contenido"][$row["item"]]=["codigo"=>$row["ID_CODBAR"],
+                                        "referencia"=>$row["ID_REFERENCIA"],
+                                        "descripcion"=>$row["DESCRIPCION"],
+                                        "disponibilidad"=>$row["disp"],
+                                        "pedidos"=>$row["pedido"],
+                                        "alistados"=>$row["alistado"],
+                                        'ubicacion'=>$row["ubicacion"]
+                                        ];
+                    
+                    $cont++;
+                    $itembus["ubicaciones"][$cont]=$row["ubicacion"];                          
+                }
+
+            }
+            
+            if ($cont>0) {
+                $itembus["ubicaciones"]=array_unique($itembus["ubicaciones"]);
+            }
+            
+            return $itembus;
+
+
+        //si no encuentra resultados devuelve "error"
+        }else{
+
+            return ['estado'=>"error",
+                    'contenido'=>"Item no encontrado en la base de datos!"];
+
+        }
+    }
+
+    // busca items por fuera de la requisicion
+    public function ctrBuscarIE($item)
+    {
+        $busqueda=$this->modelo->mdlMostrarIE($item);
+        
+        // return $busqueda;
+        if ($busqueda->rowCount() > 0) {
+
+            if($busqueda->rowCount() == 1){
+
+                $row = $busqueda->fetch();
+
+                //guarda los resultados en un arreglo
+                $itembus=["estado"=>"encontrado",
+                           "contenido"=> ["codigo"=>$row["ID_CODBAR"],
+                                           "iditem"=>$row["ID_ITEM"],  
+                                           "referencia"=>$row["ID_REFERENCIA"],
+                                           "descripcion"=>$row["DESCRIPCION"],
+                                         ]
+                         ];
+                
+               
+                return $itembus;
+
+            }else {
+
+                $itembus["estado"]=["encontrado"];
+
+                $cont=0;
+
+                while($row = $busqueda->fetch()){
+                        
+                    $itembus["contenido"][$cont]=["codigo"=>$row["ID_CODBAR"],
+                                        "iditem"=>$row["ID_ITEM"],  
+                                        "referencia"=>$row["ID_REFERENCIA"],
+                                        "descripcion"=>$row["DESCRIPCION"],
+                                        ];
+                    $cont++;
+
+                }
+
+                return $itembus;
+
+            }
+
+        //si no encuentra resultados devuelve "error"
+        }else{
+
+            return ['estado'=>"error",
+                    'contenido'=>"Item no encontrado!"];
+
+        }
+    }
+
+    // agrega un item extra a la requisicion
+    public function ctrAgregarIE($items)
+    {
+        $resultado=$this->modelo->mdlAgregarIE($items);
+        return $resultado;
+    }
+
     //crea una caja si no existe
-    public function ctrCrearCaja(){
+    public function ctrCrearCaja()
+    {
         
         $busqueda=$this->modelo->mdlMostrarNumCaja();
 
@@ -154,7 +249,8 @@ class ControladorAlistar {
     }
 
     // busca los items de 1 caja
-    public function ctrBuscarItemCaja($numcaja){
+    public function ctrBuscarItemCaja($numcaja)
+    {
         
         $busqueda=$this->modelo->mslMostrarItemsCaja($numcaja);
 
@@ -178,7 +274,8 @@ class ControladorAlistar {
     }
     
     //cierra la caja
-    public function ctrCerrarCaja($tipocaja,$items,$req){
+    public function ctrCerrarCaja($tipocaja,$items,$req)
+    {
         // busca el numero de la ultima acaja abierta por el usuario
         $busqueda = $this->modelo->mdlMostrarNumCaja();
         $numcaja = ($busqueda->fetch());
@@ -194,7 +291,8 @@ class ControladorAlistar {
     }
 
     // elimina 1 item de una caja
-    public function ctrEliminarItemCaja($cod_barras,$no_caja=null){
+    public function ctrEliminarItemCaja($cod_barras,$no_caja=null)
+    {
         
         if ($no_caja==null) {
             $busqueda=$this->modelo->mdlMostrarNumCaja();
@@ -207,7 +305,8 @@ class ControladorAlistar {
     }
 
     // alista 1 solo item en la caja
-    public function ctrAlistarItem($item){
+    public function ctrAlistarItem($item)
+    {
         // busca el numero de la ultima acaja abierta por el usuario
         $busqueda = $this->modelo->mdlMostrarNumCaja();
         $numcaja = ($busqueda->fetch());
@@ -218,4 +317,5 @@ class ControladorAlistar {
         return $resultado;   
 
     }
+
 }

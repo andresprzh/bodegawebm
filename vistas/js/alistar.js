@@ -55,16 +55,7 @@ $(document).ready(function () {
 
         //si se presiona enter busca el item y lo pone en la pagina
         if (e.which == 13) {
-            let ubicacion = $('#ubicacion').val();
-            $.when(buscarCodbar()).done(function () {
-                $.when(mostrarItems()).done(function () {
-                    $('#ubicacion').val(ubicacion);
-                    cambiarUbicacion();
-
-                });
-            });
-
-
+            buscarCodbar();
         }
 
     });
@@ -274,7 +265,6 @@ function buscarCodbar() {
         data: { "codigo": codigo, "req": req },//datos que se enviaran
         dataType: 'JSON',
         success: function (res) {
-
             agregarItem(res, req);
             $('#codbarras').val("");
             $("#codbarras").focus();
@@ -283,7 +273,6 @@ function buscarCodbar() {
 
 
 }
-
 
 // FUNCIONQ UE QUITA UN ITEM DE LA CAJA
 function eliminarItem(iditem, req) {
@@ -343,16 +332,12 @@ function agregarItem(res, req) {
                     // EJ: entre 0 y 10 maximo valor=100, entre 11 y 100 maximo valor 1000
                     let a = 0;
                     let pot = item['pedidos'];
-
                     do {
                         a++;
-                        pot = pot / 10
+                        pot = pot / 10;
                     } while (pot > 1);
+                    let maxvalue = Math.pow(10, a);
 
-                    let maxvalue = Math.pow(10, a)
-
-                    let colorwarning = '';
-                    let titlewarning = '';
                     if (!value) {
                         value = 1;
                     }
@@ -364,11 +349,7 @@ function agregarItem(res, req) {
                             M.toast({
                                 html: toastHTML, classes: 'yellow lighten-2',
                             });
-                            colorwarning = 'yellow lighten-2';
-                            titlewarning = 'Revisar cantidad alistada';
-
                         }
-
 
                     } else {
 
@@ -376,8 +357,6 @@ function agregarItem(res, req) {
                         M.toast({
                             html: toastHTML, classes: "red lighten-2'",
                         });
-                        colorwarning = 'yellow lighten-2';
-                        titlewarning = 'Revisar cantidad alistada';
                         value = 1;
 
                     }
@@ -391,24 +370,8 @@ function agregarItem(res, req) {
                         dataType: 'JSON',
                         success: function (res) {
                             if (res) {
-                                //   se guarda el id del item en el id de la fila
-                                $('#tablaeditable').append($(`<tr
-                                                    id='E${item['iditem']}'
-                                                    class='${colorwarning}'
-                                                    title='${titlewarning}'
-                                                    >
-                                                        <td>${item['descripcion']}</td>
-                                                        <td>${item['pedidos']}</td>
-                                                        <td><input type= 'number' min='1' class='alistados eliminaritem' min=1 max=${maxvalue * 10} required value='${item['alistados']}'>  </td>
-                                                        <td><button  title='Eliminar Item' class='btn-floating btn-small waves-effect waves-light red darken-3 ' > 
-                                                            <i class='fas fa-times'></i>" 
-                                                        </button></tr></td>
-                                                    </tr>`));
-
-                                // se muestra un mensaje con el item agregado
-                                var toastHTML = `<p class='truncate'>Agregado Item <span class='yellow-text'>${item['descripcion']}</span></p>`;
-                                M.toast({ html: toastHTML, classes: 'light-green darken-4 rounded', displayLength: 500 });
-                                $('#codbarras').focus();
+                                //se recargan los datos en las tablas
+                                recargarItems();
                             } else {
                                 swal('Error al alistar el item', {
                                     icon: 'error',
@@ -422,7 +385,6 @@ function agregarItem(res, req) {
 
                 });
 
-            $('#TablaE').removeClass('hide');
         } else {
             swal('Item ya fue alistado en otra caja', {
                 icon: 'warning',
@@ -457,6 +419,7 @@ function mostrarItems() {
         data: { 'req': req },
         dataType: 'JSON',
         success: function (res) {
+
             //si encuentra el item mostrarlo en la tabla
             if (res['estado'] != 'error') {
 
@@ -469,7 +432,7 @@ function mostrarItems() {
                 for (let i in items) {
 
                     // se guarda el id del item en el id de la fila
-                    $('#tablavista').append($(`<tr id='V${items[i]['iditem']}'>
+                    $('#tablavista').append($(`<tr id='V${i}'>
                                             <td>${items[i]['descripcion']}</td>
                                             <td>${items[i]['disponibilidad']}</td>
                                             <td>${items[i]['pedidos']}</td>
@@ -531,22 +494,31 @@ function mostrarCaja() {
                         // consigue el valor maximo en decenas que puede valer la cantidad de alistados
                         // EJ: entre 0 y 10 maximo valor=100, entre 11 y 100 maximo valor 1000
                         let a = 0;
-                        let pot = items[i]['pedidos'];
+                        let pot = items[i]['pedido'];
                         do {
                             a++;
                             pot = pot / 10
                         } while (pot > 1);
-                        maxvalue = Math.pow(10, a) * 10
-
+                        maxvalue = Math.pow(10, a);
+                        colorwarning = '';
+                        titlewarning = '';
+                        if (items[i]['alistado'] > maxvalue) {
+                            colorwarning = 'yellow lighten-2';
+                            titlewarning = 'Revisar cantidad alistada';
+                        }
                         // se guerda el id del item en el id de la fila 
-                        $('#tablaeditable').append($(`<tr id='E${items[i]['iditem']}'>
-                                            <td>${items[i]['descripcion']}</td>
-                                            <td>${items[i]['pedido']}</td>
-                                            <td><input type= 'number' min='1' class='alistados eliminaritem' min=1 max=${maxvalue} required value='${items[i]['alistado']}'></td>
-                                            <td><button  title='Eliminar Item' class='btn-floating btn-small waves-effect waves-light red darken-3 ' > 
-                                            <i class='fas fa-times'></i>
-                                            </button></tr></td>
-                                        </tr>`));
+                        $('#tablaeditable').append($(`<tr
+                                                       id='E${items[i]['iditem']}'
+                                                       class='${colorwarning}'
+                                                       title='${titlewarning}'
+                                                      >
+                                                        <td>${items[i]['descripcion']}</td>
+                                                        <td>${items[i]['pedido']}</td>
+                                                        <td><input type= 'number' min='1' class='alistados eliminaritem' min=1 max=${maxvalue * 10} required value='${items[i]['alistado']}'></td>
+                                                        <td><button  title='Eliminar Item' class='btn-floating btn-small waves-effect waves-light red darken-3 ' > 
+                                                            <i class='fas fa-times'></i>
+                                                        </button></tr></td>
+                                                      </tr>`));
 
                     }
 
