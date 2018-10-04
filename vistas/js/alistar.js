@@ -541,7 +541,9 @@ function mostrarCaja() {
                         icon: 'warning',
                     })
                         .then((ok) => {
-                            location.reload();
+                            // location.reload();
+                            $('.requeridos').val(res['contenido']);
+                            recargarItems();
                         });
                 }
 

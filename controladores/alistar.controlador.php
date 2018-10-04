@@ -257,8 +257,22 @@ class ControladorAlistar {
 
             $itembus["estado"]="encontrado";
 
+            $cont=0;
+
+            while($row = $busqueda->fetch()){
+                
+                // si hay cajas sin cerrar en otra requisicion
+                if ($row['no_req']!=$this->req[0]) {
+                    $itembus=['estado'=>"error2",
+                    'contenido'=>$row['no_req']];
+                    return $itembus;
+                    break;
+                }
+                $itembus["contenido"][]= $row;                 
+
+            }
+
             
-            $itembus["contenido"]= $busqueda->fetchAll();   
             
             return $itembus;
 
