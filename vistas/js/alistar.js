@@ -379,6 +379,7 @@ function agregarItem(res, req) {
                                 if (res) {
                                     //se recargan los datos en las tablas
                                     recargarItems();
+                                    $('#codbarras').focus();
                                 } else {
                                     swal('Error al alistar el item', {
                                         icon: 'error',
