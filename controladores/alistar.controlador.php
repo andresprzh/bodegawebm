@@ -41,12 +41,13 @@ class ControladorAlistar {
 
                 //solo muestra los items que no estan alistados
                 $itembus["estado"]=$row['estado'];                        
-                $itembus["contenido"][$row["item"]][]=["codigo"=>$row["ID_CODBAR"],
+                $itembus["contenido"]=["codigo"=>$row["ID_CODBAR"],
                                         "iditem"=>$row["item"],  
                                         "referencia"=>$row["ID_REFERENCIA"],
                                         "descripcion"=>$row["DESCRIPCION"],
                                         "disponibilidad"=>$row["disp"],
-                                        "pedidos"=>$row["pedido"],
+                                        "pedido"=>$row["pedido"],
+                                        "pendientes"=>$row["pendientes"],
                                         "alistados"=>$row["alistado"],
                                         "caja"=>$row["no_caja"],
                                         "alistador"=>$row["nombre"],
@@ -79,10 +80,8 @@ class ControladorAlistar {
                     return $itembus;
                 }
                 
-
             }
             
-            // en el arreglo se guarda el estado de la consulta         
             
             //retorna el item a la funcion
             return $itembus;
@@ -118,7 +117,7 @@ class ControladorAlistar {
                                         "referencia"=>$row["ID_REFERENCIA"],
                                         "descripcion"=>$row["DESCRIPCION"],
                                         "disponibilidad"=>$row["disp"],
-                                        "pedidos"=>$row["pedido"],
+                                        "pendientes"=>$row["pendientes"],
                                         "alistados"=>$row["alistado"],
                                         'ubicacion'=>$row["ubicacion"]
                                         ];
@@ -258,7 +257,7 @@ class ControladorAlistar {
 
             $itembus["estado"]="encontrado";
 
-            $cont=0;
+            
             $itembus["contenido"]= $busqueda->fetchAll();   
             
             return $itembus;
@@ -274,17 +273,19 @@ class ControladorAlistar {
     }
     
     //cierra la caja
-    public function ctrCerrarCaja($tipocaja,$items,$req)
+    public function ctrCerrarCaja($tipocaja,$items,$req,$pesocaja)
     {
         // busca el numero de la ultima acaja abierta por el usuario
         $busqueda = $this->modelo->mdlMostrarNumCaja();
         $numcaja = ($busqueda->fetch());
         $numcaja = $numcaja['numcaja'];
+        
         for ($i=0; $i <count($items) ; $i++) { 
             $resultado=$this->modelo->mdlAlistarItem($items[$i],$numcaja);
         }
+        
         if ($resultado) {
-            $resultado=$this->modelo->mdlCerrarCaja($tipocaja,$numcaja);
+            $resultado=$this->modelo->mdlCerrarCaja($tipocaja,$pesocaja,$numcaja);
         }
 
         return $resultado;

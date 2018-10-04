@@ -39,6 +39,7 @@
 
 <!-- SweetAlert 2 -->
 <script src="vistas/plugins/sweetalert2/sweetalert.min.js"></script>
+<!-- <script src="vistas/plugins/sweetalert2/sweetalert2.all.js"></script> -->
 
 <!-- Materialize -->
 <script src="vistas/lib/materialize/js/materialize.js"></script>

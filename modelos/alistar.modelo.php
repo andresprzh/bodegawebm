@@ -27,13 +27,14 @@ class ModeloAlistar extends Conexion{
         $iditem=$items["iditem"];
         $alistados=$items["alistados"];
         
-        $stmt= $this->link->prepare('INSERT INTO alistado(item,no_caja,alistado) 
-        VALUES(:iditem,:no_caja,:alistados)
+        $stmt= $this->link->prepare('INSERT INTO alistado(item,no_req,no_caja,alistado) 
+        VALUES(:iditem,:no_req,:no_caja,:alistados)
         ON DUPLICATE KEY UPDATE
         alistado=:alistados,
         estado=2;');
 
         $stmt->bindParam(":iditem",$iditem,PDO::PARAM_STR);
+        $stmt->bindParam(":no_req",$no_req,PDO::PARAM_STR);
         $stmt->bindParam(":no_caja",$numcaja,PDO::PARAM_INT);
         $stmt->bindParam(":alistados",$alistados,PDO::PARAM_INT);
 
@@ -48,19 +49,24 @@ class ModeloAlistar extends Conexion{
         
     }
 
-    public function mdlCerrarCaja($tipocaja,$numcaja){
+    public function mdlCerrarCaja($tipocaja,$pesocaja,$numcaja){
 
         $no_req=$this->req[0];$alistador=$this->req[1];
         
         $stmt= $this->link->prepare('UPDATE caja
-		SET tipo_caja=:tipocaja,estado=1
+		SET tipo_caja=:tipocaja,
+        estado=1,
+        peso=:peso
 		WHERE no_caja=:numcaja;
         ');
 
         $stmt->bindParam(":tipocaja",$tipocaja,PDO::PARAM_STR);
+        $stmt->bindParam(":peso",$pesocaja,PDO::PARAM_STR);
         $stmt->bindParam(":numcaja",$numcaja,PDO::PARAM_INT);
+        
 
         $res=$stmt->execute();
+        return $stmt->errorInfo();
         $stmt->closeCursor();  
         // retorna el resultado de la sentencia
 	    return $res;

@@ -58,14 +58,15 @@ if (isset($_GET['ruta'])) {
         ============================================================================================================================*/
         case 'empacar':
             // obtienen los datos dela requisicion (numero requisicion y codigo alistador)
-            $req=$_POST["req"];
+            $req=$_POST['req'];
             $tipocaja=$_POST['tipocaja'];
+            $pesocaja=$_POST['pesocaja'];
             $items=$_POST['items'];
-
+            
             //crea objeto controlador 
             $controlador=new ControladorAlistar($req);
 
-            $respuesta=$controlador->ctrCerrarCaja($tipocaja,$items,$req);
+            $respuesta=$controlador->ctrCerrarCaja($tipocaja,$items,$req,$pesocaja);
 
             print json_encode($respuesta);
             // termina la ejecucion del api

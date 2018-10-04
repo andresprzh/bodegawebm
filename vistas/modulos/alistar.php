@@ -2,13 +2,18 @@
                                                     FORMAULARIO    
 ============================================================================================================================ -->
 <div class="fixed" style="padding-left:15px;" >
-
+    <br>
     <div class="row">
-  
-        <select   list="requeridos" name="requeridos" class="requeridos browser-default col s12 " id="requeridos">
-            <option value="" disabled selected>Número requisicion</option>
-        </select>
-            
+        <div class="col s9 m9 l9">
+            <select   list="requeridos" name="requeridos" class="requeridos browser-default col s12 " id="requeridos">
+                <option value="" disabled selected>Número requisicion</option>
+            </select>
+        </div>
+        <div class="col s3 m3 l3">
+            <button id="refresh" title="Recargar" onclick="recargarItems()" class="btn waves-effect waves-light green darken-3 " >
+                <i class="fas fa-sync"></i>
+            </button>
+        </div>     
     </div>
 
 </div>
@@ -42,16 +47,12 @@
     
     <div  id="TablaV" >
         <div class=" entradas hide ">
-            <div class="col s9">
+            <div class="col s12">
                 <select  list="ubicacion" name="ubicacion" class="browser-default " id="ubicacion">
                     <option value=""  selected>Ubicacion</option>
                 </select>
             </div> 
-            <div class="col s3">
-                <button id="refresh" title="Recargar" onclick="recargarItems()" class="btn waves-effect waves-light green darken-3 " >
-                    <i class="fas fa-sync"></i>
-                </button>
-            </div> 
+            
             <!-- INPUT PARA AGREGAR ITEMS -->
             <div class="input-field center col s12  input_barras">
 
