@@ -20,7 +20,7 @@ $(document).ready(function () {
             // SE MUESTRAN LAS reqUISICIONES EN EL MENU DE SELECCION
             for (var i in res) {
 
-                $("#requeridos").append($('<option value="' + res[i] + '">' + res[i] + '</option>'));
+                $("#requeridos").append($('<option value="' + res[i]['no_req'] + '">' + res[i]['no_req'].substr(4) + res[i]['descripcion'] + '</option>'));
 
             }
 

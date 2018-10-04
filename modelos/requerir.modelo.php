@@ -9,13 +9,29 @@ class ModeloRequierir extends Conexion{
         
     }
 
-    public function mdlMostrarReq($item,$valor=null){
+    public function mdlMostrarReq($item=null,$valor=null){
     
         $tabla='requisicion';
         if ($valor==null) {
-            $stmt= $this->link-> prepare("SELECT * FROM $tabla WHERE $item = 0");
+            $stmt= $this->link-> prepare("SELECT no_req,creada,lo_origen,lo_destino,solicitante,enviado,recibido,estado,
+            sedes.descripcion
+            FROM $tabla 
+            INNER JOIN sedes ON requisicion.lo_destino=sedes.codigo
+            WHERE $item = 0;");
+        }else if($item=='estado') {
+            
+            $stmt= $this->link-> prepare("SELECT no_req,creada,lo_origen,lo_destino,solicitante,enviado,recibido,estado,
+            sedes.descripcion
+            FROM $tabla 
+            INNER JOIN sedes ON requisicion.lo_destino=sedes.codigo
+            WHERE $item < :$item;");
         }else {
-            $stmt= $this->link-> prepare("SELECT * FROM $tabla WHERE $item = :$item");
+            $stmt= $this->link-> prepare("SELECT no_req,creada,lo_origen,lo_destino,solicitante,enviado,recibido,estado,
+            sedes.descripcion
+            FROM $tabla 
+            INNER JOIN sedes ON requisicion.lo_destino=sedes.codigo
+            WHERE $item = :$item;");
+            
         }
         
         //para evitar sql injection
@@ -37,17 +53,19 @@ class ModeloRequierir extends Conexion{
 
     public function mdlMostrarItems($req){
        
-        $stmt= $this->link->prepare('SELECT pedido.item,pedido.estado,pedido.no_req,pedido,pedido.disp,pedido.alistado,pedido.ubicacion,
-		MIN(COD_BARRAS.ID_CODBAR) AS ID_CODBAR,ITEMS.ID_REFERENCIA, ITEMS.ID_REFERENCIA,ITEMS.DESCRIPCION,
-		caja.no_caja,usuario.nombre,requisicion.lo_origen,requisicion.lo_destino
-		FROM COD_BARRAS
-		INNER JOIN ITEMS ON ID_ITEM=ID_ITEMS	
-		INNER JOIN pedido ON Item=ID_ITEM	
-		INNER JOIN requisicion ON requisicion.no_req=pedido.no_req
-		LEFT JOIN caja ON caja.no_caja=pedido.no_caja
-		LEFT JOIN usuario ON id_usuario=caja.alistador
-		WHERE pedido.no_req = :no_req
-		GROUP BY  pedido.item,pedido.estado,pedido.no_req,pedido,pedido.disp,pedido.alistado,pedido.ubicacion;');
+
+        $stmt= $this->link->prepare('SELECT pedido.item,pedido.estado,pedido.no_req,pedido,pedido.disp,pedido.ubicacion,
+        ITEMS.ID_REFERENCIA, ITEMS.ID_REFERENCIA,ITEMS.DESCRIPCION,
+        requisicion.lo_origen,requisicion.lo_destino,
+        MIN(COD_BARRAS.ID_CODBAR) AS ID_CODBAR
+        FROM COD_BARRAS
+        INNER JOIN ITEMS ON ID_ITEM=ID_ITEMS	
+        INNER JOIN pedido ON Item=ID_ITEM	
+        INNER JOIN requisicion ON requisicion.no_req=pedido.no_req
+        WHERE pedido.no_req = :no_req
+        GROUP BY  pedido.item,pedido.estado,pedido.no_req,pedido,pedido.disp,pedido.ubicacion,
+        ITEMS.ID_REFERENCIA, ITEMS.ID_REFERENCIA,ITEMS.DESCRIPCION,
+        requisicion.lo_origen,requisicion.lo_destino;');
 
         
         $stmt->bindParam(":no_req",$req,PDO::PARAM_STR);
@@ -81,13 +99,24 @@ class ModeloRequierir extends Conexion{
         
         $tabla="pedido";
 
-        $sql='INSERT INTO '.$tabla.'(item,no_req,ubicacion,disp,pedido,alistado) VALUES'. $items;
+        $sql='INSERT INTO '.$tabla.'(item,no_req,ubicacion,disp,pedido) VALUES'. $items;
         
         $stmt= $this->link->prepare($sql);
         
         $res= $stmt->execute();
         $stmt->closeCursor();
         return $res;
+    }
+
+    public function mdlSubirPedido($item,$no_req){
+
+        $stmt= $this->link->prepare("INSERT INTO (item,no_req,ubicacion,disp,pedido) VALUES(:item,:no_req,:ubicacion,:disp,:pedido)");
+
+        $stmt->bindParam(":item",$item["id"],PDO::PARAM_STR);
+        $stmt->bindParam(":no_req",$no_req,PDO::PARAM_STR);
+        $stmt->bindParam(":ubicacion",$item["ubicacion"],PDO::PARAM_STR);
+        $stmt->bindParam(":disp",$item["disp"],PDO::PARAM_INT);
+        $stmt->bindParam(":pedido",$item["pedido"],PDO::PARAM_INT);
     }
 
     public function mdlEliReq($req)
