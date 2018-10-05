@@ -65,8 +65,8 @@ if (isset($_GET['ruta'])) {
             
             //crea objeto controlador 
             $controlador=new ControladorAlistar($req);
-
-            $respuesta=$controlador->ctrCerrarCaja($tipocaja,$items,$req,$pesocaja);
+                        
+            $respuesta=$controlador->ctrCerrarCaja($items,$req,$tipocaja,$pesocaja);
 
             print json_encode($respuesta);
             // termina la ejecucion del api
@@ -129,10 +129,8 @@ if (isset($_GET['ruta'])) {
             $modelo=new ModeloRequierir();
             $item='estado';
             if (isset($_REQUEST['valor'])) {
-                // muestra requisiciones segun el valor enviado
                 $res=$modelo->mdlMostrarReq($item,$_REQUEST['valor']);
             }else{
-                //solo muestra requisiciones sin terminar
                 $res=$modelo->mdlMostrarReq($item);
             }
 
@@ -151,7 +149,6 @@ if (isset($_GET['ruta'])) {
                 // muestra el vector     como dato JSON
                 print json_encode($req);
             }
-            // termina la ejecucion del api
             return 1;
             break;
             

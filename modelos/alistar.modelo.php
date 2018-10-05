@@ -9,7 +9,8 @@ class ModeloAlistar extends Conexion{
     /* ============================================================================================================================
                                                         CONSTRUCTOR   
     ============================================================================================================================*/
-    function __construct($req) {
+    function __construct($req)
+    {
 
         $this->req=$req;
         parent::__construct();
@@ -20,9 +21,9 @@ class ModeloAlistar extends Conexion{
                                                         FUNCIONES   
     ============================================================================================================================*/
     //funcion que asigna los la cantidad alistada a cada item en la caja
-    public function mdlAlistarItem($items,$numcaja){
+    public function mdlAlistarItem($items,$numcaja)
+    {
 
-    
         $no_req=$this->req[0];$alistador=$this->req[1];
         $iditem=$items["iditem"];
         $alistados=$items["alistados"];
@@ -30,8 +31,7 @@ class ModeloAlistar extends Conexion{
         $stmt= $this->link->prepare('INSERT INTO alistado(item,no_req,no_caja,alistado) 
         VALUES(:iditem,:no_req,:no_caja,:alistados)
         ON DUPLICATE KEY UPDATE
-        alistado=:alistados,
-        estado=2;');
+        alistado=:alistados;');
 
         $stmt->bindParam(":iditem",$iditem,PDO::PARAM_STR);
         $stmt->bindParam(":no_req",$no_req,PDO::PARAM_STR);
@@ -49,7 +49,8 @@ class ModeloAlistar extends Conexion{
         
     }
 
-    public function mdlCerrarCaja($tipocaja,$pesocaja,$numcaja){
+    public function mdlCerrarCaja($tipocaja,$pesocaja,$numcaja)
+    {
 
         $no_req=$this->req[0];$alistador=$this->req[1];
         
@@ -66,7 +67,7 @@ class ModeloAlistar extends Conexion{
         
 
         $res=$stmt->execute();
-        return $stmt->errorInfo();
+            
         $stmt->closeCursor();  
         // retorna el resultado de la sentencia
 	    return $res;
@@ -76,7 +77,8 @@ class ModeloAlistar extends Conexion{
     }
     
     //crea una caja nueva correspoendiente a la requisicion  
-    public function mdlCrearCaja(){
+    public function mdlCrearCaja()
+    {
 
         //obtiene el codigo del alistador
         $alistador=$this->req[1];
@@ -95,7 +97,8 @@ class ModeloAlistar extends Conexion{
     }
 
     // saca el item de una caja eliminandolo de la tabla alistado
-    public function mdlEliminarItemCaja($item,$no_caja){
+    public function mdlEliminarItemCaja($item,$no_caja)
+    {
 
         $no_req=$this->req[0];$alistador=$this->req[1];
         
@@ -118,7 +121,8 @@ class ModeloAlistar extends Conexion{
     }
 
     //busca items de la tabla pedido usando el codigo de barras
-    public function mdlMostrarItems($cod_barras){
+    public function mdlMostrarItems($cod_barras)
+    {
         
         $no_req=$this->req[0];$alistador=$this->req[1];
         $stmt= $this->link->prepare("CALL buscarcod(:cod_barras,:no_req,NULL);");
@@ -137,7 +141,8 @@ class ModeloAlistar extends Conexion{
 
     }
 
-    public function mslMostrarItemsCaja($numcaja){
+    public function mdlMostrarItemsCaja($numcaja)
+    {
         $no_req=$this->req[0];$alistador=$this->req[1];
 
         $stmt= $this->link->prepare("CALL buscarcod('%%','%%',:numcaja);");
@@ -233,6 +238,6 @@ class ModeloAlistar extends Conexion{
         // cierra la conexion
         $stmt=null;
  
-     }
+    }
 
 }

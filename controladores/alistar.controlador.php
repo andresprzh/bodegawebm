@@ -251,7 +251,7 @@ class ControladorAlistar {
     public function ctrBuscarItemCaja($numcaja)
     {
         
-        $busqueda=$this->modelo->mslMostrarItemsCaja($numcaja);
+        $busqueda=$this->modelo->mdlMostrarItemsCaja($numcaja);
 
         if ($busqueda->rowCount() > 0) {
 
@@ -287,13 +287,16 @@ class ControladorAlistar {
     }
     
     //cierra la caja
-    public function ctrCerrarCaja($tipocaja,$items,$req,$pesocaja)
+    public function ctrCerrarCaja($items,$req,$tipocaja,$pesocaja,$numcaja=null)
     {
-        // busca el numero de la ultima acaja abierta por el usuario
-        $busqueda = $this->modelo->mdlMostrarNumCaja();
-        $numcaja = ($busqueda->fetch());
-        $numcaja = $numcaja['numcaja'];
         
+        // busca el numero de la ultima acaja abierta por el usuario
+        if ($numcaja==null) {
+            $busqueda = $this->modelo->mdlMostrarNumCaja();
+            $numcaja = ($busqueda->fetch());
+            $numcaja = $numcaja['numcaja'];
+        }
+                
         for ($i=0; $i <count($items) ; $i++) { 
             $resultado=$this->modelo->mdlAlistarItem($items[$i],$numcaja);
         }
